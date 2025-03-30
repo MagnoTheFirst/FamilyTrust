@@ -4,6 +4,7 @@ import jakarta.persistence.PostUpdate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(path="api/v1/stock")
 public class TransactionController {
 
     @GetMapping()
