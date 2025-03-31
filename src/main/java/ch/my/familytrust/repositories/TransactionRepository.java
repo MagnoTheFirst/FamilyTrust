@@ -28,6 +28,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT s FROM Transaction s WHERE s.name = ?1 AND s.transactionStatus = 'ACTIVE' ")
     List<Transaction> findByDirectory(String name);
 
+    @Query("SELECT s FROM Transaction s WHERE s.name = ?1 AND s.transactionStatus = 'ACTIVE' ")
+    List<Transaction> findByInvestMentType(INVESTMENT_TYPE investmentType);
+
+    @Query("SELECT s FROM Transaction s WHERE s.investmentType = ?1 AND s.author = ?2 AND s.transactionStatus = 'ACTIVE' ")
+    List<Transaction> findByInvestMentTypeAndOwner(INVESTMENT_TYPE investmentType, String owner);
+
+    @Query("SELECT s FROM Transaction s WHERE s.investmentType = ?1 AND s.tag = ?2 AND s.transactionStatus = 'ACTIVE' ")
+    List<Transaction> findByInvestMentTypeAndTag(INVESTMENT_TYPE investmentType, String tag);
+
+
 /*
     @Query("SELECT s FROM Transaction s WHERE s.INVESTMENT_TYPE = ?1")
     Optional<Transaction> findByDate_of_purchase(LocalDateTime date_of_purchase);
