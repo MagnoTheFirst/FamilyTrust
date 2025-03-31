@@ -4,7 +4,10 @@ import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import ch.my.familytrust.enums.TAG;
 import ch.my.familytrust.enums.TRANSACTION_STATUS;
 import ch.my.familytrust.enums.TRANSACTION_TYPE;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,10 +22,15 @@ import org.antlr.v4.runtime.misc.NotNull;
 @NoArgsConstructor
 public class Transaction extends Item{
 
+    @Hidden
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     public UUID id = UUID.randomUUID();
+
+    @Size(min = 3,max = 20)
+    @Schema(description = "The name of the author of the transaction")
     public String author;
+
     @NotNull
     @Column(name = "INVESTMENT_TYPE")
     @Enumerated(EnumType.STRING)

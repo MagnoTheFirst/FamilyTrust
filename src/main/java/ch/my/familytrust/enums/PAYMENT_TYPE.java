@@ -4,6 +4,8 @@ public enum PAYMENT_TYPE {
 
     DIVIDEND,
     INCOME,
-    CAPITAL_PAYMENT
+    CAPITAL_PAYMENT,
+    ACCOUNT_TRANSFER,
+    CASH_OUT
 
 }
