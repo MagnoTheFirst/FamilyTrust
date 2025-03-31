@@ -2,6 +2,7 @@ package ch.my.familytrust.services;
 
 import ch.my.familytrust.entities.Transaction;
 import ch.my.familytrust.repositories.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class TransactionService {
         this.transactinRepository = transactinRepository;
     }
 
+    @Transactional
     public void createNewTransaction(Transaction transaction){
         transactinRepository.saveAndFlush(transaction);
     }

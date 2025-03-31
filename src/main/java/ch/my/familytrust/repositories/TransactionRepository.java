@@ -17,10 +17,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     @Query("SELECT s FROM Transaction s WHERE s.author = ?1")
     List<Transaction> findByName(String name);
-
+/*
     @Query("SELECT s FROM Transaction s WHERE s.INVESTMENT_TYPE = ?1")
     Optional<Transaction> findByDate_of_purchase(LocalDateTime date_of_purchase);
-
+*/
     @Query("SELECT s FROM Transaction s WHERE s.author = ?1")
     Optional<Transaction> findByGuarantee(LocalDateTime guarantee);
 

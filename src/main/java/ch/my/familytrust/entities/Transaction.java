@@ -18,7 +18,7 @@ import lombok.Setter;
 public class Transaction extends Item{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     public UUID id = UUID.randomUUID();
     public String author;
     @Column(name = "INVESTMENT_TYPE")
@@ -27,13 +27,13 @@ public class Transaction extends Item{
     @Column(name = "TRANSACTION_STATUS")
     @Enumerated(EnumType.STRING)
     public TRANSACTION_STATUS transactionStatus;
-    @Column(name = "TRANSACTION_TYPE")
+
     @Enumerated(EnumType.STRING)
     public TRANSACTION_TYPE transactionType;
 
     LocalDateTime date = LocalDateTime.now();
 
-    public Transaction(String name, String comment, String author, Enum transaction_type, Enum transaction_status, Enum investment_type){
+    public Transaction(String name, String comment, String author, TRANSACTION_TYPE transaction_type, TRANSACTION_STATUS transaction_status, INVESTMENT_TYPE investment_type){
         super(name, comment);
         this.author = author;
         this.transactionStatus = transaction_status;
