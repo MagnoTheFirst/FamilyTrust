@@ -1,10 +1,9 @@
 package ch.my.familytrust.entities;
 
-public class Asset extends Item{
+import jakarta.persistence.Entity;
 
-    Double cash_in_price;
-    Double cash_out_price;
-
+@Entity
+public class Asset extends Transaction{
 
 
 }

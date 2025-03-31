@@ -1,6 +1,8 @@
 package ch.my.familytrust.controller;
 
+import ch.my.familytrust.entities.Stock;
 import ch.my.familytrust.entities.Transaction;
+import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import ch.my.familytrust.services.TransactionService;
 import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +21,22 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping()
+    @GetMapping("/getAllActiveTransactions")
     public List<Transaction> test1(){
         return transactionService.getTransactions();
     }
 
-    @PostMapping()
+    @PostMapping("/createTransaction")
     public void test2(@RequestBody Transaction transaction){
+        transaction.getInvestmentType();
+        System.out.println(transaction.toString());
         transactionService.createNewTransaction(transaction);
+        if(transaction.getInvestmentType() == INVESTMENT_TYPE.STOCK){
+
+        }
+        else if(transaction.getInvestmentType()==INVESTMENT_TYPE.CRYPTOCURRENCY){
+
+        }
     }
 
     @PutMapping
@@ -39,9 +49,10 @@ public class TransactionController {
 
     }
 
-    @GetMapping("/test")
-    public String test5(){
-        return "test";
+    @GetMapping("/getStocksOf/{owner}")
+    public List<Transaction> test5(@PathVariable String owner){
+        System.out.println(owner);
+        return transactionService.getTransactionsOfOwner(owner);
     }
 
 }

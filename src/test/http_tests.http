@@ -16,18 +16,42 @@ PUT http://localhost:8081/api/v1/stock/7?name=door
 
 ###
 
-GET http://localhost:8081/api/v1/stock/?name=Monitor
+GET http://localhost:8084/api/v1/family-trust/getAllActiveTransactions
+###
+GET http://localhost:8084/api/v1/family-trust/getStocksOf/ale
 ###
 
+POST http://localhost:8084/api/v1/family-trust/createTransaction
+Content-Type: application/json
+
+{
+  "name": "testing endpoint 5",
+  "author": "ale",
+  "amount": 3.65,
+  "investmentType":"STOCK",
+  "transactionType":"BUY",
+  "transactionStatus": "ACTIVE",
+  "comment": "testing 5",
+  "cash_in_price": 356.25
+
+}
+
+
+###
 POST http://localhost:8084/api/v1/family-trust
 Content-Type: application/json
 
 {
-  "name": "testing endpoint",
+  "name": "testing endpoint 3",
   "author": "ale",
-  "INVESTMENT_TYPE":"STOCK",
-  "TRANSACTION_TYPE":"BUY",
-  "TRANSACTION_STATUS": "ACTIVE",
-  "comment": "testing"
+  "amount": 3.89,
+  "investmentType":"STOCK",
+  "transactionType":"BUY",
+  "transactionStatus": "ACTIVE",
+  "comment": "testing 5",
+  "cash_in_price": 356.25,
+  "units_bought": 4.5,
+  "price_per_unit_buy": 56.8,
+  "tag": "FAMILY_TRUST"
 
 }

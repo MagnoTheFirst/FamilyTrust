@@ -10,14 +10,15 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 public class Payment extends Item{
+    @Id
+    UUID id = UUID.randomUUID();
     @Column(name = "PAYMENT_TYPE")
     @Enumerated(EnumType.STRING)
     PAYMENT_TYPE paymentType;
     String author;
     String account;
 
-    @Id
-    UUID id = UUID.randomUUID();
+
 
     public Payment(String name, String comment, PAYMENT_TYPE paymentType, String author, String account) {
         super(name, comment);
