@@ -1,14 +1,15 @@
 package ch.my.familytrust.entities;
 
-import jakarta.persistence.Id;
+import ch.my.familytrust.enums.INVESTMENT_TYPE;
+import ch.my.familytrust.enums.TRANSACTION_STATUS;
+import ch.my.familytrust.enums.TRANSACTION_TYPE;
+import jakarta.persistence.*;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import jakarta.persistence.Entity;
 
 @Entity
 @Getter
@@ -17,20 +18,27 @@ import jakarta.persistence.Entity;
 public class Transaction extends Item{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public UUID id = UUID.randomUUID();
-
     public String author;
-    public Enum INVESTMENT_TYPE;
-    public Enum TRANSACTION_STATUS;
-    public Enum TRANSACTION_TYPE;
+    @Column(name = "INVESTMENT_TYPE")
+    @Enumerated(EnumType.STRING)
+    public INVESTMENT_TYPE investmentType;
+    @Column(name = "TRANSACTION_STATUS")
+    @Enumerated(EnumType.STRING)
+    public TRANSACTION_STATUS transactionStatus;
+    @Column(name = "TRANSACTION_TYPE")
+    @Enumerated(EnumType.STRING)
+    public TRANSACTION_TYPE transactionType;
 
+    LocalDateTime date = LocalDateTime.now();
 
-    public Transaction(LocalDateTime date, String name, String comment, String author, Enum transaction_type, Enum transaction_status, Enum investment_type){
-        super(date, name, comment);
+    public Transaction(String name, String comment, String author, Enum transaction_type, Enum transaction_status, Enum investment_type){
+        super(name, comment);
         this.author = author;
-        this.TRANSACTION_STATUS = transaction_status;
-        this.TRANSACTION_TYPE = transaction_type;
-        this.INVESTMENT_TYPE = investment_type;
+        this.transactionStatus = transaction_status;
+        this.transactionType = transaction_type;
+        this.investmentType = investment_type;
     }
 
 }

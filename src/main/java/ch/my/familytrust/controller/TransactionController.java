@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="api/v1/stock")
+@RequestMapping(path="api/v1/family-trust")
 public class TransactionController {
 
     TransactionService transactionService;
@@ -37,6 +37,11 @@ public class TransactionController {
     @DeleteMapping
     public void test4(){
 
+    }
+
+    @GetMapping("/test")
+    public String test5(){
+        return "test";
     }
 
 }

@@ -15,7 +15,7 @@ import java.util.UUID;
 @EnableJpaRepositories
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    @Query("SELECT s FROM Transaction s WHERE s.name = ?1")
+    @Query("SELECT s FROM Transaction s WHERE s.author = ?1")
     List<Transaction> findByName(String name);
 
     @Query("SELECT s FROM Transaction s WHERE s.INVESTMENT_TYPE = ?1")

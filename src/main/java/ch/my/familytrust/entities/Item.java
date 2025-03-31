@@ -8,14 +8,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Item {
 
-    public LocalDateTime date;
+    public LocalDateTime date = LocalDateTime.now();
     public String name;
     public String comment;
 
+
+    public Item(String name, String comment) {
+        this.name = name;
+        this.comment = comment;
+    }
 
 
 }
