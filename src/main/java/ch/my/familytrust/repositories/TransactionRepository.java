@@ -3,6 +3,7 @@ package ch.my.familytrust.repositories;
 import ch.my.familytrust.entities.Transaction;
 import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
@@ -16,8 +17,10 @@ import java.util.UUID;
 @EnableJpaRepositories
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-    @Query("SELECT s FROM Transaction s WHERE s.name = ?1 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByNameActive(String name);
+
+    @Modifying
+    @Query("update Transaction t set t.amount = ?1 where t.id = ?2")
+    int setAmmount(Double amount, UUID transactionId);
 
     @Query("SELECT s FROM Transaction s WHERE s.author = ?1 AND s.transactionStatus = 'ACTIVE'")
     List<Transaction> findByAuthorActive(String author);
