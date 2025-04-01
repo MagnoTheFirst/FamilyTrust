@@ -17,30 +17,6 @@ import java.util.UUID;
 @EnableJpaRepositories
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
-
-    @Modifying
-    @Query("update Transaction t set t.amount = ?1 where t.id = ?2")
-    int setAmmount(Double amount, UUID transactionId);
-
-    @Query("SELECT s FROM Transaction s WHERE s.author = ?1 AND s.transactionStatus = 'ACTIVE'")
-    List<Transaction> findByAuthorActive(String author);
-
-    @Query("SELECT s FROM Transaction s WHERE s.investmentType = ?1 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByInvestmentType(INVESTMENT_TYPE investmentType);
-
-    @Query("SELECT s FROM Transaction s WHERE s.name = ?1 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByDirectory(String name);
-
-    @Query("SELECT s FROM Transaction s WHERE s.name = ?1 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByInvestMentType(INVESTMENT_TYPE investmentType);
-
-    @Query("SELECT s FROM Transaction s WHERE s.investmentType = ?1 AND s.author = ?2 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByInvestMentTypeAndOwner(INVESTMENT_TYPE investmentType, String owner);
-
-    @Query("SELECT s FROM Transaction s WHERE s.investmentType = ?1 AND s.tag = ?2 AND s.transactionStatus = 'ACTIVE' ")
-    List<Transaction> findByInvestMentTypeAndTag(INVESTMENT_TYPE investmentType, String tag);
-
-
 /*
     @Query("SELECT s FROM Transaction s WHERE s.INVESTMENT_TYPE = ?1")
     Optional<Transaction> findByDate_of_purchase(LocalDateTime date_of_purchase);

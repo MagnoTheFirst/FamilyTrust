@@ -4,7 +4,7 @@ import ch.my.familytrust.entities.Stock;
 import ch.my.familytrust.entities.Transaction;
 import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import ch.my.familytrust.enums.TRANSACTION_TYPE;
-import ch.my.familytrust.services.TransactionService;
+import ch.my.familytrust.services.StockService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,52 +19,52 @@ import java.util.UUID;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Transaction API", description = "API für alle Transaktionen")
+@Tag(name = "Stock API", description = "API für alle Assets")
 @RestController
 @RequestMapping(path="api/v1/family-trust")
-public class TransactionController {
+public class StockController {
 
-    TransactionService transactionService;
+    StockService transactionService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public StockController(StockService transactionService) {
         this.transactionService = transactionService;
     }
-    @Operation(summary = "Alle Transaktionen abrufen")
-    @GetMapping("/getAllActiveTransactions")
-    public List<Transaction> test1(){
+    @Operation(summary = "Alle Investitionen abrufen")
+    @GetMapping("/getAllActiveStocks")
+    public List<Stock> test1(){
         return transactionService.getTransactions();
     }
 
 
-    @Operation(summary = "Erlaubt es eine Transaktion zu anzusetzen.")
+    @Operation(summary = "Erlaubt es eine Investition zu dokumentieren.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "found the foo", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Transaction.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Foo not found", content = @Content) })
 
-    @PostMapping("/createTransaction")
-    public void test2(@RequestBody Transaction transaction){
+    @PostMapping("/createStock")
+    public void test2(@RequestBody Stock transaction){
         transaction.getInvestmentType();
         System.out.println(transaction.toString());
         transaction.setTransactionType(TRANSACTION_TYPE.BUY);
         transactionService.createNewTransaction(transaction);
     }
-    @Operation(summary = "Alle Transaktionen abrufen")
+    @Operation(summary = "Alle Stocks abrufen")
     @PutMapping
     public void test3(){
 
     }
     @Operation(summary = "Alle Transaktionen abrufen")
-    @DeleteMapping("/removeTransaction/{transactionId}")
-    public void test4(@PathVariable UUID transactionId){
-        transactionService.cancelTransaction(transactionId);
+    @DeleteMapping("/removeStock/{stockId}")
+    public void test4(@PathVariable UUID stockId){
+        transactionService.cancelTransaction(stockId);
     }
 
-    @Operation(summary = "Alle Transaktionen abrufen")
+    @Operation(summary = "Alle Stocks eines Nuetzers abrufen")
     @GetMapping("/getStocksOf/{owner}")
-    public List<Transaction> test5(@PathVariable String owner){
+    public List<Stock> test5(@PathVariable String owner){
         System.out.println(owner);
         return transactionService.getTransactionsOfOwner(owner);
     }
