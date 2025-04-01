@@ -25,7 +25,6 @@ public class PaymentController {
 
     @PostMapping("/createPaymentRecord")
     public void test2(@RequestBody Payment payment){
-        System.out.println(payment.toString());
         paymentService.createNewPaymentRecord(payment);
     }
 

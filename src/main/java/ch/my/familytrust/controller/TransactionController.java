@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -55,10 +57,11 @@ public class TransactionController {
 
     }
     @Operation(summary = "Alle Transaktionen abrufen")
-    @DeleteMapping
-    public void test4(){
-
+    @DeleteMapping("/removeTransaction/{transactionId}")
+    public void test4(@PathVariable UUID transactionId){
+        transactionService.cancelTransaction(transactionId);
     }
+
     @Operation(summary = "Alle Transaktionen abrufen")
     @GetMapping("/getStocksOf/{owner}")
     public List<Transaction> test5(@PathVariable String owner){

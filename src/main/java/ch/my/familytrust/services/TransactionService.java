@@ -8,16 +8,18 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TransactionService {
     private final TransactionRepository transactinRepository;
-
+    private final TransactionRepository transactionRepository;
 
 
     @Autowired
-    public TransactionService(TransactionRepository transactinRepository) {
+    public TransactionService(TransactionRepository transactinRepository, TransactionRepository transactionRepository) {
         this.transactinRepository = transactinRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Async
@@ -32,6 +34,11 @@ public class TransactionService {
     @Async
     public List<Transaction> getTransactionsOfOwner(String owner){
         return transactinRepository.findByAuthorActive(owner);
+    }
+
+    public void cancelTransaction(UUID transactionId){
+        Transaction transaction = transactionRepository.findById(transactionId).get();
+        transactionRepository.delete(transaction);
     }
 
 
