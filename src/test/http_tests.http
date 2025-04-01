@@ -67,7 +67,8 @@ Content-Type: application/json
   "cash_in_price": 356.25,
   "units_bought": 4.5,
   "price_per_unit_buy": 56.8,
-  "tag": "FAMILY_TRUST"
+  "tag": "FAMILY_TRUST",
+  "account":
 
 }
 

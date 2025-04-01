@@ -64,6 +64,10 @@ public class Transaction extends Item{
     @Column(name = "PRICE_PER_UNIT_SELL")
     public Double price_per_unit_sell;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    public Account account;
+
     public Transaction(String name, String comment, String author, TRANSACTION_TYPE transaction_type, TRANSACTION_STATUS transaction_status, INVESTMENT_TYPE investment_type){
         super(name, comment);
         this.author = author;

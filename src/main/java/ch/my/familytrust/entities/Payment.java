@@ -20,13 +20,15 @@ public class Payment{
     @Enumerated(EnumType.STRING)
     public PAYMENT_TYPE paymentType;
     public String author;
-    public String account;
     public Double amount;
     public String comment;
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    public Account account;
 
 
 
-    public Payment(Double amount, String comment, PAYMENT_TYPE paymentType, String author, String account) {
+    public Payment(Double amount, String comment, PAYMENT_TYPE paymentType, String author, Account account) {
         this.paymentType = paymentType;
         this.author = author;
         this.account = account;

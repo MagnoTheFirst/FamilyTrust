@@ -2,6 +2,7 @@ package ch.my.familytrust.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Directory {
+@AllArgsConstructor
+public class Account {
 
     @Id
     public UUID id = UUID.randomUUID();
@@ -23,6 +25,7 @@ public class Directory {
     public String description;
 
     public LocalDate creationDate;
+
 
     //TODO[] implement owner once user management is implemented
 }
