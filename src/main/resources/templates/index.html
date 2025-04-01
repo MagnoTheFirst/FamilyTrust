@@ -1,53 +1,97 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FamilyTrust Portfolio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            font-weight: 600;
+        }
+        .btn {
+            border-radius: .5rem;
+        }
+        table {
+            background: white;
+            border-radius: .5rem;
+            overflow: hidden;
+        }
+    </style>
 </head>
-<body class="p-4">
 
-<h1>📈 FamilyTrust Portfolio Dashboard</h1>
+<body class="container py-4">
+
+<h1 class="mb-4 text-center">📊 FamilyTrust Portfolio Dashboard</h1>
 
 <!-- Dashboard -->
-<div class="my-4">
-    <h2>Aktuelles Portfolio</h2>
-    <ul>
-        <li>Gesamtes investiertes Kapital: <strong th:text="${totalInvested}">0</strong> CHF</li>
-        <li>Aktueller Marktwert: <strong th:text="${totalValue}">0</strong> CHF</li>
-        <li>Realisiert Gewinn / Verlust: <strong th:text="${realizedProfit}">0</strong> CHF</li>
-    </ul>
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Investiertes Kapital</h5>
+            <h3 th:text="${totalInvested} + ' CHF'">0 CHF</h3>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Marktwert</h5>
+            <h3 th:text="${totalValue} + ' CHF'">0 CHF</h3>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Realisiert Gewinn / Verlust</h5>
+            <h3 th:text="${realizedProfit} + ' CHF'">0 CHF</h3>
+        </div>
+    </div>
 </div>
 
-<!-- Kauf Formular -->
-<div class="my-4">
-    <h2>Aktie kaufen</h2>
-    <form method="post" th:action="@{/buy}">
-        <input class="form-control mb-2" name="symbol" placeholder="Symbol (z.B. AAPL)" required/>
-        <input class="form-control mb-2" name="quantity" type="number" placeholder="Anzahl" required/>
-        <input class="form-control mb-2" name="price" type="number" placeholder="Kaufpreis (CHF)" step="0.01" required/>
-        <button class="btn btn-success" type="submit">Kaufen</button>
-    </form>
+<!-- Forms -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h2 class="h5">Aktie kaufen</h2>
+            <form method="post" th:action="@{/buy}">
+                <input class="form-control mb-2" name="symbol" placeholder="Symbol (z.B. AAPL)" required/>
+                <input class="form-control mb-2" name="quantity" type="number" placeholder="Anzahl" required/>
+                <input class="form-control mb-2" name="price" type="number" step="0.01" placeholder="Kaufpreis (CHF)" required/>
+                <button class="btn btn-success w-100" type="submit">Kaufen</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h2 class="h5">Aktie verkaufen</h2>
+            <form method="post" th:action="@{/sell}">
+                <input class="form-control mb-2" name="symbol" placeholder="Symbol" required/>
+                <input class="form-control mb-2" name="quantity" type="number" placeholder="Anzahl" required/>
+                <input class="form-control mb-2" name="price" type="number" step="0.01" placeholder="Verkaufspreis (CHF)" required/>
+                <button class="btn btn-danger w-100" type="submit">Verkaufen</button>
+            </form>
+        </div>
+    </div>
 </div>
 
-<!-- Verkauf Formular -->
-<div class="my-4">
-    <h2>Aktie verkaufen</h2>
-    <form method="post" th:action="@{/sell}">
-        <input class="form-control mb-2" name="symbol" placeholder="Symbol" required/>
-        <input class="form-control mb-2" name="quantity" type="number" placeholder="Anzahl" required/>
-        <input class="form-control mb-2" name="price" type="number" placeholder="Verkaufspreis (CHF)" step="0.01" required/>
-        <button class="btn btn-danger" type="submit">Verkaufen</button>
-    </form>
-</div>
-
-<!-- Historie -->
-<div class="my-4">
-    <h2>Transaktionen</h2>
-    <table class="table">
+<!-- Transaktionen -->
+<div class="card p-3">
+    <h2 class="h5">Transaktions-Historie</h2>
+    <table class="table table-striped mt-3">
         <thead>
         <tr>
-            <th>Typ</th><th>Symbol</th><th>Anzahl</th><th>Preis</th><th>Datum</th>
+            <th>Typ</th>
+            <th>Symbol</th>
+            <th>Anzahl</th>
+            <th>Preis</th>
+            <th>Datum</th>
         </tr>
         </thead>
         <tbody>
