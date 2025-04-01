@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Stock API", description = "API für alle Assets")
 @RestController
-@RequestMapping(path="api/v1/family-trust")
+//@RequestMapping(path="api/v1/family-trust")stocks
+@RequestMapping(path="/stocks")
 public class StockController {
 
     StockService transactionService;
@@ -69,4 +71,27 @@ public class StockController {
         return transactionService.getTransactionsOfOwner(owner);
     }
 
+    @GetMapping
+    public String listStocks(Model model) {
+        model.addAttribute("stocks", transactionService.getTransactions());
+        return "stocks.html";
+    }
+
+    @GetMapping("/new")
+    public String newStock(Model model) {
+        model.addAttribute("stock", new Stock());
+        return "stock-form";
+    }
+
+    @PostMapping("/save")
+    public String saveStock(@ModelAttribute Stock stock) {
+        transactionService.createNewTransaction(stock);
+        return "redirect:/stocks";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteStock(@PathVariable UUID id) {
+        transactionService.cancelTransaction(id);
+        return "redirect:/stocks";
+    }
 }
