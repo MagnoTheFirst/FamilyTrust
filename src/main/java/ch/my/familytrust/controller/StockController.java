@@ -46,13 +46,15 @@ public class StockController {
             @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Foo not found", content = @Content) })
 
-    @PostMapping("/createStock")
-    public void test2(@RequestBody Stock transaction){
+    @PostMapping("/buy")
+    public void test2(@ModelAttribute Stock transaction){
         transaction.getInvestmentType();
         System.out.println(transaction.toString());
         transaction.setTransactionType(TRANSACTION_TYPE.BUY);
         transactionService.createNewTransaction(transaction);
     }
+
+
     @Operation(summary = "Alle Stocks abrufen")
     @PutMapping
     public void test3(){
@@ -69,6 +71,13 @@ public class StockController {
     public List<Stock> test5(@PathVariable String owner){
         System.out.println(owner);
         return transactionService.getTransactionsOfOwner(owner);
+    }
+
+
+    @Operation(summary = "Alle Stocks eines Nuetzers abrufen")
+    @GetMapping("/getStocks")
+    public List<Stock> test7(){
+        return transactionService.getTransactions();
     }
 
     @GetMapping
