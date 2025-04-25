@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,12 +38,19 @@ public class StockController {
     public StockController(StockService transactionService) {
         this.transactionService = transactionService;
     }
+
     @Operation(summary = "Alle Investitionen abrufen")
     @GetMapping("/getAllActiveStocks")
     public List<Stock> test1() throws IOException {
         return transactionService.getTransactions();
     }
 
+
+    @Operation(summary = "Konkreten Aktien Preis abrufen")
+    @GetMapping("/getPriceOf/{stock}")
+    public Object getPriceOfStockFromApi(@PathVariable String stock) throws IOException, ExecutionException, InterruptedException {
+        return stockMarketService.getStockPrice(stock);
+    }
 
     @Operation(summary = "Erlaubt es eine Investition zu dokumentieren.")
     @ApiResponses(value = {
