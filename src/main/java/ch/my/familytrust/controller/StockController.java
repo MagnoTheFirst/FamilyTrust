@@ -4,6 +4,7 @@ import ch.my.familytrust.entities.Stock;
 import ch.my.familytrust.entities.Transaction;
 import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import ch.my.familytrust.enums.TRANSACTION_TYPE;
+import ch.my.familytrust.services.StockMarketService;
 import ch.my.familytrust.services.StockService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,12 +31,15 @@ public class StockController {
     StockService transactionService;
 
     @Autowired
+    StockMarketService stockMarketService = new StockMarketService();
+
+    @Autowired
     public StockController(StockService transactionService) {
         this.transactionService = transactionService;
     }
     @Operation(summary = "Alle Investitionen abrufen")
     @GetMapping("/getAllActiveStocks")
-    public List<Stock> test1(){
+    public List<Stock> test1() throws IOException {
         return transactionService.getTransactions();
     }
 
@@ -66,7 +71,7 @@ public class StockController {
         transactionService.cancelTransaction(stockId);
     }
 
-    @Operation(summary = "Alle Stocks eines Nuetzers abrufen")
+    @Operation(summary = "Alle Stocks eines Nutzers abrufen")
     @GetMapping("/getStocksOf/{owner}")
     public List<Stock> test5(@PathVariable String owner){
         System.out.println(owner);
