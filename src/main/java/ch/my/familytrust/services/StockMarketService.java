@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class StockMarketService {
+public class StockMarketService {/*
     @Value("${local.rapid-api-key}")
     String API_KEY;
 
@@ -36,7 +36,7 @@ public class StockMarketService {
         JsonNode json = mapper.readTree(response.getResponseBody());
         client = new DefaultAsyncHttpClient();
         client.prepare("GET", "https://yahoo-finance127.p.rapidapi.com/earnings/tsla")
-                .setHeader("x-rapidapi-key", "7a90e8f7ccmsh8f7857290cbe141p12bbfejsn53246d0bacd3")
+                .setHeader("x-rapidapi-key", API_KEY)
                 .setHeader("x-rapidapi-host", "yahoo-finance127.p.rapidapi.com")
                 .execute()
                 .toCompletableFuture()
@@ -44,7 +44,7 @@ public class StockMarketService {
                 .join();
 
         client.prepare("GET", "https://yahoo-finance127.p.rapidapi.com/finance-analytics/tsla")
-                .setHeader("x-rapidapi-key", "7a90e8f7ccmsh8f7857290cbe141p12bbfejsn53246d0bacd3")
+                .setHeader("x-rapidapi-key", API_KEY)
                 .setHeader("x-rapidapi-host", "yahoo-finance127.p.rapidapi.com")
                 .execute()
                 .toCompletableFuture()
@@ -52,7 +52,7 @@ public class StockMarketService {
                 .join();
         client = new DefaultAsyncHttpClient();
         client.prepare("GET", "https://yahoo-finance127.p.rapidapi.com/index-trend/aapl")
-                .setHeader("x-rapidapi-key", "7a90e8f7ccmsh8f7857290cbe141p12bbfejsn53246d0bacd3")
+                .setHeader("x-rapidapi-key", API_KEY)
                 .setHeader("x-rapidapi-host", "yahoo-finance127.p.rapidapi.com")
                 .execute()
                 .toCompletableFuture()
@@ -62,7 +62,7 @@ public class StockMarketService {
         client.close();
         return json;
 
-    }
+    }*/
 
 
 }

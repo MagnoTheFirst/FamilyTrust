@@ -1,0 +1,30 @@
+
+<!-- stocks.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{templates/layout :: layout}">
+<section>
+    <h2>Stocks</h2>
+    <a class="btn btn-primary mb-3" th:href="@{/stocks/new}">Neuen Stock anlegen</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Author</th>
+            <th>Investment Type</th>
+            <th>Amount</th>
+            <th>Aktion</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stock : ${stocks}">
+            <td th:text="${stock.name}"></td>
+            <td th:text="${stock.author}"></td>
+            <td th:text="${stock.investmentType}"></td>
+            <td th:text="${stock.amount}"></td>
+            <td><a class="btn btn-danger btn-sm" th:href="@{'/stocks/delete/' + ${stock.id}}">Löschen</a></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</html>

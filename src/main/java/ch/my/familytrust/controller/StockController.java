@@ -49,7 +49,7 @@ public class StockController {
     @Operation(summary = "Konkreten Aktien Preis abrufen")
     @GetMapping("/getPriceOf/{stock}")
     public Object getPriceOfStockFromApi(@PathVariable String stock) throws IOException, ExecutionException, InterruptedException {
-        return stockMarketService.getStockPrice(stock);
+        return null;//stockMarketService.getStockPrice(stock);
     }
 
     @Operation(summary = "Erlaubt es eine Investition zu dokumentieren.")
