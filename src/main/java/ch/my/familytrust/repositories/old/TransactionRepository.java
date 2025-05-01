@@ -1,16 +1,10 @@
-package ch.my.familytrust.repositories;
+package ch.my.familytrust.repositories.old;
 
-import ch.my.familytrust.entities.Transaction;
-import ch.my.familytrust.enums.INVESTMENT_TYPE;
+import ch.my.familytrust.entities.old.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository

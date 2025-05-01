@@ -1,7 +1,7 @@
-package ch.my.familytrust.services;
+package ch.my.familytrust.services.old;
 
-import ch.my.familytrust.entities.Payment;
-import ch.my.familytrust.repositories.PaymentRepository;
+import ch.my.familytrust.entities.old.Payment;
+import ch.my.familytrust.repositories.old.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

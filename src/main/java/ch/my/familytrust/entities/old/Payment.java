@@ -1,12 +1,12 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.old;
 
+import ch.my.familytrust.entities.new_code.Account;
 import ch.my.familytrust.enums.PAYMENT_TYPE;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity

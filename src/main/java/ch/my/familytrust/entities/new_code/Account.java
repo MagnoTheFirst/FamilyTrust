@@ -1,7 +1,8 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.new_code;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ public class Account {
     public UUID id = UUID.randomUUID();
 
     public String name;
+
+    public FTUser user;
 
     public String description;
 

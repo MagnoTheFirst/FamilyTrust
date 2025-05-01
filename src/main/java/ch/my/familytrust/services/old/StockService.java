@@ -1,10 +1,7 @@
-package ch.my.familytrust.services;
+package ch.my.familytrust.services.old;
 
-import ch.my.familytrust.entities.Stock;
-import ch.my.familytrust.entities.Transaction;
-import ch.my.familytrust.repositories.StockRepository;
-import ch.my.familytrust.repositories.TransactionRepository;
-import jakarta.transaction.Transactional;
+import ch.my.familytrust.entities.old.Stock;
+import ch.my.familytrust.repositories.old.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

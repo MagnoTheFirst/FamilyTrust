@@ -1,9 +1,6 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.new_code;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +17,7 @@ import java.util.UUID;
 public class Record {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID recordId= UUID.randomUUID();
     @ManyToOne
     @JoinColumn(name = "account_id")

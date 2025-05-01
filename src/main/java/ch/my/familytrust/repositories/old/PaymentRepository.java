@@ -1,7 +1,6 @@
-package ch.my.familytrust.repositories;
+package ch.my.familytrust.repositories.old;
 
-import ch.my.familytrust.entities.Payment;
-import ch.my.familytrust.entities.Transaction;
+import ch.my.familytrust.entities.old.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

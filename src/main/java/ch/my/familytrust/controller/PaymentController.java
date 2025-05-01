@@ -1,10 +1,7 @@
 package ch.my.familytrust.controller;
 
-import ch.my.familytrust.entities.Payment;
-import ch.my.familytrust.entities.Transaction;
-import ch.my.familytrust.enums.PAYMENT_TYPE;
-import ch.my.familytrust.enums.TRANSACTION_TYPE;
-import ch.my.familytrust.services.PaymentService;
+import ch.my.familytrust.entities.old.Payment;
+import ch.my.familytrust.services.old.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

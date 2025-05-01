@@ -1,7 +1,6 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.old;
 
 import ch.my.familytrust.enums.TAG;
-import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
 import lombok.*;
 

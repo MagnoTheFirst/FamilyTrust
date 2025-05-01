@@ -1,16 +1,14 @@
 package ch.my.familytrust.controller;
 
-import ch.my.familytrust.entities.Stock;
-import ch.my.familytrust.entities.Transaction;
-import ch.my.familytrust.enums.INVESTMENT_TYPE;
+import ch.my.familytrust.entities.old.Stock;
+import ch.my.familytrust.entities.old.Transaction;
 import ch.my.familytrust.enums.TRANSACTION_TYPE;
-import ch.my.familytrust.services.StockMarketService;
-import ch.my.familytrust.services.StockService;
+import ch.my.familytrust.services.old.StockMarketService;
+import ch.my.familytrust.services.old.StockService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

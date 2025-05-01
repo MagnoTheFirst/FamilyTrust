@@ -1,4 +1,4 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.old;
 
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Stock extends Transaction{
+public class Stock extends Transaction {
 
 
     public Stock(Transaction transaction){

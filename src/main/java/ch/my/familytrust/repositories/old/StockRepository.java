@@ -1,7 +1,6 @@
-package ch.my.familytrust.repositories;
+package ch.my.familytrust.repositories.old;
 
-import ch.my.familytrust.entities.Stock;
-import ch.my.familytrust.entities.Transaction;
+import ch.my.familytrust.entities.old.Stock;
 import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

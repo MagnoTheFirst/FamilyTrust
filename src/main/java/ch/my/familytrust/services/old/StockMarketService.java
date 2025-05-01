@@ -1,18 +1,6 @@
-package ch.my.familytrust.services;
+package ch.my.familytrust.services.old;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.BoundRequestBuilder;
-import org.asynchttpclient.DefaultAsyncHttpClient;
-import org.asynchttpclient.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class StockMarketService {/*

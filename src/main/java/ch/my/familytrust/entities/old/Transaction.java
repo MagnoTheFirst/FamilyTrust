@@ -1,5 +1,6 @@
-package ch.my.familytrust.entities;
+package ch.my.familytrust.entities.old;
 
+import ch.my.familytrust.entities.new_code.Account;
 import ch.my.familytrust.enums.INVESTMENT_TYPE;
 import ch.my.familytrust.enums.TAG;
 import ch.my.familytrust.enums.TRANSACTION_STATUS;
@@ -20,7 +21,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Transaction extends Item{
+public class Transaction extends Item {
 
     @Hidden
     @Id
