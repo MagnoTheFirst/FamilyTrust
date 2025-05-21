@@ -1,8 +1,11 @@
 package ch.my.familytrust.entities;
 
+import ch.my.familytrust.enums.CashflowType;
 import ch.my.familytrust.enums.TransactionType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.catalina.User;
 import org.hibernate.Transaction;
@@ -24,32 +27,70 @@ import java.util.HashMap;
 @Table(name = "accounts")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Account {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+
     String currencyCode = "CHF";
+
     @Transient
-    Currency accountCurrency = Currency.getInstance(currencyCode);
+    Currency accountCurrency;
 
     String accountName;
 
     UUID ownerUserId;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    List<AccountTransaction> transactions;
+    Boolean active;
+    Boolean archived;
+
     @CreatedDate
     LocalDateTime createdDate;
     @LastModifiedDate
     LocalDateTime lastAccess;
+
+    @Transient
     BigDecimal balance;
-    BigDecimal totalCashflow;
+
+    @NotNull
+    BigDecimal availableMoney;
+
+    @Transient
     BigDecimal totalAssetValue;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Asset> assets = new ArrayList<>();
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountTransaction> transactions = new ArrayList<>();
+
+    /**
+     * Payments, Dvidend Payment and Withdrawals
+     * */
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccountCashFlow> accountCashFlows = new ArrayList<>();
+
     //List<User> sharedWith;
+
+
+    public Account(String currencyCode, String accountName, UUID ownerUserId) {
+
+        this.currencyCode = currencyCode;
+        this.accountCurrency  = Currency.getInstance(currencyCode);
+        this.accountName = accountName;
+        this.ownerUserId = ownerUserId;
+        this.active = true;
+        this.archived = false;
+        this.createdDate =  LocalDateTime.now();
+        this.lastAccess = LocalDateTime.now();
+        this.balance = BigDecimal.ZERO;
+        this.availableMoney = BigDecimal.ZERO;
+        this.totalAssetValue = BigDecimal.ZERO;
+    }
 
     /**
      *
@@ -108,7 +149,28 @@ public class Account {
        // }
     }
 
-    public Asset createAsset(){
-        return null;
+    public void accountCashFlowTransaction(AccountCashFlow accountCashFlow) {
+        if (accountCashFlow == null || accountCashFlow.getCashFlowAmount() == null) {
+            throw new IllegalArgumentException("AccountCashFlow or its amount is null");
+        }
+
+        if (availableMoney == null) {
+            availableMoney = BigDecimal.ZERO;
+        }
+
+        switch (accountCashFlow.getCashFlowType()) {
+            case DEPOSIT, DIVIDEND_PAYMENT -> {
+                this.availableMoney = this.availableMoney.add(accountCashFlow.getCashFlowAmount());
+            }
+            case WITHDRAWAL -> {
+                this.availableMoney = this.availableMoney.subtract(accountCashFlow.getCashFlowAmount());
+            }
+            default -> throw new IllegalArgumentException("CashflowType not supported");
+        }
+
+        // Vergiss nicht: CashFlow zur Liste hinzufügen
+        this.accountCashFlows.add(accountCashFlow);
+        accountCashFlow.setAccount(this); // wichtig für bidirektionales Mapping
     }
+
 }
