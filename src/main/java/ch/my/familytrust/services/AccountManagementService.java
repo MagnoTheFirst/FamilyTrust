@@ -59,14 +59,14 @@ public class AccountManagementService {
     }
 
     public Account makeAccountCashFlowTransaction(LocalDateTime cashflowDate, UUID ownerUserId, UUID accountId, BigDecimal cashFlowAmount, String comment){
-        if(cashflowDate == null){
+        if(cashflowDate == null ){
             cashflowDate = LocalDateTime.now();
         }
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found with ID " + accountId));
 
         AccountCashFlow accountCashFlow = new AccountCashFlow(cashFlowAmount, CashflowType.DEPOSIT, comment);
-        account.accountCashFlowTransaction(accountCashFlow);
+        account = account.accountCashFlowTransaction(accountCashFlow);
         account.setLastAccess(LocalDateTime.now());
         accountRepository.save(account);
         accountRepository.flush();
@@ -75,7 +75,28 @@ public class AccountManagementService {
 
 
 
+    public Account makeAccountCashFlowTransaction(LocalDateTime cashflowDate, UUID ownerUserId, CashflowType cashflowType, UUID accountId, BigDecimal cashFlowAmount, String comment){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found with ID " + accountId));
+        if(cashflowDate == null || cashFlowAmount == null || cashFlowAmount.compareTo(BigDecimal.ZERO) < 0 || cashflowType == null){
+            cashflowDate = LocalDateTime.now();
+        }
+        if(cashflowType.equals(CashflowType.WITHDRAWAL)){
 
+            AccountCashFlow accountCashFlow = new AccountCashFlow(cashFlowAmount, cashflowType, comment);
+            account = account.accountCashFlowTransaction(accountCashFlow);
+            account.setLastAccess(LocalDateTime.now());
+            accountRepository.save(account);
+            accountRepository.flush();
+            return account;
+        }
 
+        AccountCashFlow accountCashFlow = new AccountCashFlow(cashFlowAmount, cashflowType, comment);
+        account.accountCashFlowTransaction(accountCashFlow);
+        account.setLastAccess(LocalDateTime.now());
+        accountRepository.save(account);
+        accountRepository.flush();
+        return account;
+    }
 
 }

@@ -149,28 +149,30 @@ public class Account {
        // }
     }
 
-    public void accountCashFlowTransaction(AccountCashFlow accountCashFlow) {
+    public Account accountCashFlowTransaction(AccountCashFlow accountCashFlow) {
         if (accountCashFlow == null || accountCashFlow.getCashFlowAmount() == null) {
             throw new IllegalArgumentException("AccountCashFlow or its amount is null");
         }
 
         if (availableMoney == null) {
-            availableMoney = BigDecimal.ZERO;
+            this.availableMoney = BigDecimal.ZERO;
         }
 
         switch (accountCashFlow.getCashFlowType()) {
             case DEPOSIT, DIVIDEND_PAYMENT -> {
+                System.out.println("PAYMENT OR DIVIDEND ");
                 this.availableMoney = this.availableMoney.add(accountCashFlow.getCashFlowAmount());
             }
             case WITHDRAWAL -> {
+                System.out.println("WITHDRAWAL ");
                 this.availableMoney = this.availableMoney.subtract(accountCashFlow.getCashFlowAmount());
             }
             default -> throw new IllegalArgumentException("CashflowType not supported");
         }
 
-        // Vergiss nicht: CashFlow zur Liste hinzufügen
+        accountCashFlow.setAccount(this);
         this.accountCashFlows.add(accountCashFlow);
-        accountCashFlow.setAccount(this); // wichtig für bidirektionales Mapping
+        return this;
     }
 
 }

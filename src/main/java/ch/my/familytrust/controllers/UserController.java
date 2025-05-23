@@ -5,6 +5,7 @@ import ch.my.familytrust.dtos.AccountCashFlowRequest;
 import ch.my.familytrust.dtos.CreateAccountRequest;
 import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.dtos.AccountResponseDto;
+import ch.my.familytrust.enums.CashflowType;
 import ch.my.familytrust.services.AccountManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,32 @@ public class UserController {
     public ResponseEntity<Object> depositMoney(@RequestBody AccountCashFlowRequest request){
         Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.accountId(), request.cashFlowAmount(), request.comment());
         return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT CASHFLOW AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
+    }
+
+
+    /**
+     * @param json-request
+     *
+     * */
+    @PostMapping("/user/account/newCashFlowTransaction")
+    public ResponseEntity<Object> accountTransaction(@RequestBody AccountCashFlowRequest request){
+
+        if(request.cashFlowType().equals(CashflowType.DEPOSIT)){
+            Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.cashFlowType(), request.accountId(), request.cashFlowAmount(), request.comment());
+            return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT CASHFLOW AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
+        } else if (request.cashFlowType().equals(CashflowType.WITHDRAWAL)) {
+            System.out.println(request.cashFlowType() + "   " + request.cashFlowAmount()+" " +request.cashFlowType().equals(CashflowType.WITHDRAWAL));
+            Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(),  request.cashFlowType(),request.accountId(), request.cashFlowAmount(), request.comment());
+            System.out.println(account.getAvailableMoney());
+            return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT WITHDRAWAL AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
+        }
+        else if(request.cashFlowType().equals(CashflowType.DIVIDEND_PAYMENT.toString()) && request.cashFlowAmount() != null){
+            Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.cashFlowType(), request.accountId(), request.cashFlowAmount(), request.comment());
+            return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT DIVIDEND PAYMENT AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>("TRANSACTION FAILED", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/user/{user-id}/delete/account/{account-id}")
