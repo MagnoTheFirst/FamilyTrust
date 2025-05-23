@@ -94,7 +94,7 @@ public class AccountManagementService {
         return account;
     }
 
-    @Transactional // Wichtig: Sicherstellen, dass die Session aktiv ist, wenn die Liste geladen wird
+    @Transactional
     public AccountResponseDto getAccountDtoById(UUID accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found")); // Bessere Exception-Behandlung hier

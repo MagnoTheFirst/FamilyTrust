@@ -34,6 +34,15 @@ public class UserController {
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
+
+
+    @GetMapping("/user/{user-id}/get/accounts1")
+    public ResponseEntity<Object> getUsers1(@PathVariable("user-id") UUID userId){
+
+        return null;
+    }
+
+
     /**
      * @param json-request
      *
