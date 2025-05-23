@@ -28,7 +28,7 @@ Content-Type: application/json
 
 
 ### Neue Cashflow-Transaktion erstellen
-POST http://localhost:8084/api/v1/user/account/newCashFlowTransaction
+POST http://localhost:8084/api/v1/user/account/cashFlowTransaction
 Content-Type: application/json
 
 {
@@ -36,7 +36,7 @@ Content-Type: application/json
   "accountId": "bfbee9f9-32fe-45be-b5bd-04845fd1a926",
   "userId": "123e4567-e89b-12d3-a456-426614174000",
   "cashFlowAmount": 350.00,
-  "cashFlowType": "WITHDRAWAL",
+  "cashFlowType": "DEPOSIT",
   "comment": "Auszahlung"
 }
 

@@ -17,10 +17,10 @@ public record AccountResponseDto(
         String accountName,
         String currencyCode,
         UUID ownerUserId,
-        BigDecimal balance,        // Aktueller Kontostand
+        BigDecimal balance,
         LocalDateTime lasAccessDate,
         LocalDateTime createdDate,
-        BigDecimal availableMoney
-        //List<AccountCashFlow> cashFlowList
+        BigDecimal availableMoney,
+        List<AccountCashFlowDto> cashFlowList
 ) {
 }

@@ -27,7 +27,6 @@ import java.util.HashMap;
 @Table(name = "accounts")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Account {
 
 
@@ -52,7 +51,6 @@ public class Account {
     @LastModifiedDate
     LocalDateTime lastAccess;
 
-    @Transient
     BigDecimal balance;
 
     @NotNull
@@ -77,6 +75,16 @@ public class Account {
     //List<User> sharedWith;
 
 
+    public Account() {
+        this.active = true;
+        this.archived = false;
+        this.createdDate =  LocalDateTime.now();
+        this.lastAccess = LocalDateTime.now();
+        this.balance = BigDecimal.ZERO;
+        this.availableMoney = BigDecimal.ZERO;
+        this.totalAssetValue = BigDecimal.ZERO;
+    }
+
     public Account(String currencyCode, String accountName, UUID ownerUserId) {
 
         this.currencyCode = currencyCode;
@@ -100,44 +108,11 @@ public class Account {
         accountCurrency = Currency.getInstance(currencyAbbreviation);
     }
 
-    //TODO[] Must be implemented
-    public String getBalance(){
-        return null;
+
+    public BigDecimal getBalance(){
+        return this.balance;
     }
 
-    public void transfairMoney(Account targetAccount, Double amount){
-        //Create transaction
-        //Ger targetAccount
-        //Rest ammount from Account Balance
-        //Add Transaction to Account Transaction List
-        //Add Transaction to Target Account Transaction List
-    }
-
-    public void makeAnAccountTransaction(TransactionType transactionType, Double amount){
-
-        if(TransactionType.DEPOSIT.equals(transactionType)){
-            //Create Transaction
-            //Create Cashflow
-            //Add to Cashflow list
-            //Add ammount to Account Balance
-
-        }
-        else if(TransactionType.WITHDRAWAL.equals(transactionType)){
-            //Create Transaction
-            //Create Cashflow
-            //Add to Cashflow list
-            //Subtract ammount from Account Balance
-        }
-        else if (TransactionType.DIVIDEND_PAYMENT.equals(transactionType)){
-            //Create Transaction
-            //Create Cashflow
-            //Add to Cashflow list
-            //Add ammount to Account Balance
-        }
-        else{
-            throw new IllegalArgumentException("TransactionType not supported");
-        }
-    }
 
     public void addAsset(Asset asset){
         //if(asset.name.equals()){

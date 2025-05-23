@@ -12,9 +12,9 @@ public record AccountCashFlowDto(
         String accountName,
         String currencyCode,
         BigDecimal amount,
+        UUID ownerUserId,
         CashflowType cashflowType,
         String comment,
-        LocalDateTime cashflowDate,
-        List<AccountCashFlowDto> cashFlowDtos
+        LocalDateTime cashflowDate
 ) {
 }

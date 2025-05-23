@@ -50,24 +50,12 @@ public class UserController {
      *
      * */
     @PostMapping("/user/account/cashFlowTransaction")
-    public ResponseEntity<Object> depositMoney(@RequestBody AccountCashFlowRequest request){
-        Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.accountId(), request.cashFlowAmount(), request.comment());
-        return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT CASHFLOW AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
-    }
-
-
-    /**
-     * @param json-request
-     *
-     * */
-    @PostMapping("/user/account/newCashFlowTransaction")
     public ResponseEntity<Object> accountTransaction(@RequestBody AccountCashFlowRequest request){
 
         if(request.cashFlowType().equals(CashflowType.DEPOSIT)){
             Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.cashFlowType(), request.accountId(), request.cashFlowAmount(), request.comment());
             return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT CASHFLOW AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
         } else if (request.cashFlowType().equals(CashflowType.WITHDRAWAL)) {
-            System.out.println(request.cashFlowType() + "   " + request.cashFlowAmount()+" " +request.cashFlowType().equals(CashflowType.WITHDRAWAL));
             Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(),  request.cashFlowType(),request.accountId(), request.cashFlowAmount(), request.comment());
             System.out.println(account.getAvailableMoney());
             return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT WITHDRAWAL AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
@@ -102,26 +90,12 @@ public class UserController {
      * */
     @GetMapping("/user/{user-id}/get/account/{account-id}")
     public ResponseEntity<Object> getAccount(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
-        AccountResponseDto account = mapToAccountResponseDto(accountManagementService.getAccountById(accountId));
+        AccountResponseDto account = accountManagementService.getAccountDtoById(accountId);
         if (!account.ownerUserId().equals(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(account, HttpStatus.OK);
-    }
-
-    private AccountResponseDto mapToAccountResponseDto(Account account) {
-        return new AccountResponseDto(
-                account.getId(),
-                account.getAccountName(),
-                account.getCurrencyCode(),
-                account.getOwnerUserId(),
-                account.getTotalAssetValue(),
-                account.getLastAccess(),
-                account.getCreatedDate(),
-                account.getAvailableMoney()
-                //account.getAccountCashFlows()
-        );
     }
 
 }

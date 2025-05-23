@@ -1,6 +1,8 @@
 package ch.my.familytrust.services;
 
 
+import ch.my.familytrust.dtos.AccountCashFlowDto;
+import ch.my.familytrust.dtos.AccountResponseDto;
 import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.AccountCashFlow;
 import ch.my.familytrust.enums.CashflowType;
@@ -8,11 +10,13 @@ import ch.my.familytrust.repositories.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -46,7 +50,7 @@ public class AccountManagementService {
         return new Account(currencyCode, accountName, ownerUserId);
     }
 
-    public Account getAccountById(UUID accountId){
+    public Account findAccountEntityById(UUID accountId){
         return accountRepository.findById(accountId).orElse(null);
     }
 
@@ -88,6 +92,51 @@ public class AccountManagementService {
         accountRepository.save(account);
         accountRepository.flush();
         return account;
+    }
+
+    @Transactional // Wichtig: Sicherstellen, dass die Session aktiv ist, wenn die Liste geladen wird
+    public AccountResponseDto getAccountDtoById(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found")); // Bessere Exception-Behandlung hier
+
+        return mapToAccountResponseDto(account);
+    }
+
+    // ... (Ihre anderen Service-Methoden)
+
+    // Private Hilfsmethode zum Mappen einer Account-Entität zu einem AccountResponseDto
+    private AccountResponseDto mapToAccountResponseDto(Account account) {
+        // Zuerst die Liste der AccountCashFlow-Entitäten in DTOs mappen
+        List<AccountCashFlowDto> cashFlowDtos = account.getAccountCashFlows().stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
+                .map(this::mapToAccountCashFlowDto) // Verwendet die untenstehende Hilfsmethode
+                .collect(Collectors.toList());
+
+        // Dann das Haupt-AccountResponseDto erstellen
+        return new AccountResponseDto(
+                account.getId(),
+                account.getAccountName(),
+                account.getCurrencyCode(),
+                account.getOwnerUserId(),
+                account.getBalance(),
+                account.getLastAccess(),
+                account.getCreatedDate(),
+                account.getAvailableMoney(),
+                cashFlowDtos // Hier die gemappte Liste von CashFlow-DTOs übergeben
+        );
+    }
+
+    // Private Hilfsmethode zum Mappen einer AccountCashFlow-Entität zu einem AccountCashFlowDto
+    private AccountCashFlowDto mapToAccountCashFlowDto(AccountCashFlow cashFlow) {
+        return new AccountCashFlowDto(
+                cashFlow.getUuid(),
+                cashFlow.getAccount().getAccountName(),
+                cashFlow.getAccount().getCurrencyCode(),
+                cashFlow.getCashFlowAmount(),
+                cashFlow.getAccount().getOwnerUserId(),
+                cashFlow.getCashFlowType(),
+                cashFlow.getComment(),
+                cashFlow.getCashFlowDate()
+        );
     }
 
 }
