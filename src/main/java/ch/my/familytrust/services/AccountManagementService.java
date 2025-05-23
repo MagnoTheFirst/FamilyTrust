@@ -81,15 +81,6 @@ public class AccountManagementService {
         if(cashflowDate == null || cashFlowAmount == null || cashFlowAmount.compareTo(BigDecimal.ZERO) < 0 || cashflowType == null){
             cashflowDate = LocalDateTime.now();
         }
-        if(cashflowType.equals(CashflowType.WITHDRAWAL)){
-
-            AccountCashFlow accountCashFlow = new AccountCashFlow(cashFlowAmount, cashflowType, comment);
-            account = account.accountCashFlowTransaction(accountCashFlow);
-            account.setLastAccess(LocalDateTime.now());
-            accountRepository.save(account);
-            accountRepository.flush();
-            return account;
-        }
 
         AccountCashFlow accountCashFlow = new AccountCashFlow(cashFlowAmount, cashflowType, comment);
         account.accountCashFlowTransaction(accountCashFlow);

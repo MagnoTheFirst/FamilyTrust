@@ -72,7 +72,7 @@ public class UserController {
             System.out.println(account.getAvailableMoney());
             return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT WITHDRAWAL AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
         }
-        else if(request.cashFlowType().equals(CashflowType.DIVIDEND_PAYMENT.toString()) && request.cashFlowAmount() != null){
+        else if(request.cashFlowType().equals(CashflowType.DIVIDEND_PAYMENT)){
             Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.cashFlowType(), request.accountId(), request.cashFlowAmount(), request.comment());
             return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT DIVIDEND PAYMENT AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
         }

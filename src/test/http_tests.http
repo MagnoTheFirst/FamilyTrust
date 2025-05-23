@@ -35,7 +35,7 @@ Content-Type: application/json
   "cashFlowDate": "2025-05-21T20:00:00",
   "accountId": "bfbee9f9-32fe-45be-b5bd-04845fd1a926",
   "userId": "123e4567-e89b-12d3-a456-426614174000",
-  "cashFlowAmount": 150.00,
+  "cashFlowAmount": 350.00,
   "cashFlowType": "WITHDRAWAL",
   "comment": "Auszahlung"
 }
@@ -49,7 +49,7 @@ Content-Type: application/json
     "accountId": "bfbee9f9-32fe-45be-b5bd-04845fd1a926",
     "userId": "123e4567-e89b-12d3-a456-426614174000",
     "cashFlowAmount": 1500.00,
-    "cashFlowType": "WITHDRAWAL",
+    "cashFlowType": "DIVIDEND_PAYMENT",
     "comment": "Auszahlung "
 }
 

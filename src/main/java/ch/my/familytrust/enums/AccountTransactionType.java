@@ -3,7 +3,7 @@ package ch.my.familytrust.enums;
 public enum AccountTransactionType {
         DEPOSIT,
         WITHDRAWAL,
-        DIVIDEND_CASH,
+        DIVIDEND_PAYMENT,
         INTEREST,
         FEES,
         ASSET_BUY,
