@@ -4,13 +4,13 @@ package ch.my.familytrust.controllers;
 import ch.my.familytrust.dtos.AccountCashFlowRequest;
 import ch.my.familytrust.dtos.CreateAccountRequest;
 import ch.my.familytrust.entities.Account;
+import ch.my.familytrust.dtos.AccountResponseDto;
 import ch.my.familytrust.services.AccountManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +30,6 @@ public class UserController {
     public ResponseEntity<Object> getUsers(@PathVariable("user-id") UUID userId){
         System.out.println(userId);
         List<Account> accounts = accountManagementService.getAccountsByUserId(userId);
-        System.out.println(accounts.isEmpty());
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
@@ -38,7 +37,7 @@ public class UserController {
      * @param json-request
      *
      * */
-    @PostMapping("/user/{user-id}/create/account")
+    @PostMapping("/user/create/account")
     public ResponseEntity<Object> createUser(@RequestBody CreateAccountRequest request, @PathVariable("user-id") UUID userId){
         Account account = accountManagementService.createAccount(new Account(request.currencyCode(), request.accountName(), request.ownerUserId()));
         accountManagementService.createAccountEntity(request.currencyCode(), request.accountName(), request.ownerUserId());
@@ -49,7 +48,7 @@ public class UserController {
      * @param json-request
      *
      * */
-    @PostMapping("/user/{user-id}/account/{account-id}/cashFlowTransaction")
+    @PostMapping("/user/account/cashFlowTransaction")
     public ResponseEntity<Object> depositMoney(@RequestBody AccountCashFlowRequest request){
         Account account = accountManagementService.makeAccountCashFlowTransaction(request.cashFlowDate(), request.userId(), request.accountId(), request.cashFlowAmount(), request.comment());
         return new ResponseEntity<>("TRANSACTION SUCCESSFULL ACCOUNT CASHFLOW AMOUNT : " +account.getAvailableMoney().toString(), HttpStatus.OK);
@@ -70,6 +69,32 @@ public class UserController {
     }
 
 
+    /**
+     * @param json-request
+     *
+     * */
+    @GetMapping("/user/{user-id}/get/account/{account-id}")
+    public ResponseEntity<Object> getAccount(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
+        AccountResponseDto account = mapToAccountResponseDto(accountManagementService.getAccountById(accountId));
+        if (!account.ownerUserId().equals(userId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+        return new ResponseEntity<>(account, HttpStatus.OK);
+    }
+
+    private AccountResponseDto mapToAccountResponseDto(Account account) {
+        return new AccountResponseDto(
+                account.getId(),
+                account.getAccountName(),
+                account.getCurrencyCode(),
+                account.getOwnerUserId(),
+                account.getTotalAssetValue(),
+                account.getLastAccess(),
+                account.getCreatedDate(),
+                account.getAvailableMoney()
+                //account.getAccountCashFlows()
+        );
+    }
 
 }
