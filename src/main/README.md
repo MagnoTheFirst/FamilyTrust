@@ -116,3 +116,18 @@ erDiagram
 
 ``` 
 
+### TODO
+
+    [] Implement buy asset functionality
+    [] Implement sell asset functionality 
+    [] Implement list account functionlity in json format
+    [] Implement show portfolio evolution functionality
+    [] Implement profit/loss per asset functionality 
+    [] Implement transfair money from one account to another functionality
+    [] Implement create document with portfolio statistic functionality
+    [] Implement keycloak functionalities
+    [] Implement recurent payment functionality
+    [] Implement list asset per account functionality
+    [] Implement list asset transaction functionality 
+    [] Implement list overall account per user statistic
+    [] Implement pagination for account transactions
