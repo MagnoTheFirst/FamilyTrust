@@ -131,3 +131,4 @@ erDiagram
     [] Implement list asset transaction functionality 
     [] Implement list overall account per user statistic
     [] Implement pagination for account transactions
+    [] Implement JUnit tests

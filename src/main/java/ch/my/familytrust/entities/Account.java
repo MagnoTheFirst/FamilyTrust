@@ -1,5 +1,6 @@
 package ch.my.familytrust.entities;
 
+import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.CashflowType;
 import ch.my.familytrust.enums.TransactionType;
 import jakarta.persistence.*;
@@ -115,13 +116,20 @@ public class Account {
 
 
     public void addAsset(Asset asset){
-        //if(asset.name.equals()){
-            //create AssetTransaction
-            //Add to AssetTransaction List
-            //Modify amount
-            //Modify currentPrice
-            //Modify assetBalance
-       // }
+        this.assets.add(asset);
+    }
+
+    //TODO[] complete this method.
+    public void addAssetAndAssetTransaction(AssetTransaction transaction){
+        boolean assetExists = false;
+        for(Asset asset : this.assets){
+            if(asset.getAssetId().equals(transaction.getAsset().getAssetId())){
+                assetExists = true;
+            }
+        }
+        if(!assetExists){
+            addAsset(transaction.getAsset());
+        }
     }
 
     public Account accountCashFlowTransaction(AccountCashFlow accountCashFlow) {
