@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@RestController("api/v1")
+@RestController("/api/v1")
 public class UserAccountController {
 
 

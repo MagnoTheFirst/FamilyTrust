@@ -12,13 +12,13 @@ import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 public class Asset {
 
     @Id
@@ -51,7 +51,6 @@ public class Asset {
     private Account account;
 
     public Asset(Boolean archived, Boolean active, BigDecimal assetBalance, Double amount, BigDecimal currentPrice, AssetType assetType, String stockSymbol, String name) {
-        if(assetTransactions.isEmpty()){
             this.archived = archived;
             this.active = active;
             this.assetBalance = assetBalance;
@@ -61,8 +60,13 @@ public class Asset {
             this.stockSymbol = stockSymbol;
             this.name = name;
             this.assetId = assetId;
-        }
+            this.assetTransactions = new ArrayList<>();
 
+
+    }
+
+    public Asset() {
+        this.assetTransactions = new ArrayList<>();
     }
 
     public void updateBalance() {
