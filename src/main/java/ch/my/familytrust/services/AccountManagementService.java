@@ -42,7 +42,7 @@ public class AccountManagementService {
         account.setArchived(true);
         accountRepository.save(account);
         accountRepository.flush();
-        log.info("Saved Account: {}, Owner: {}", account.getId(), account.getOwnerUserId());
+        log.info("Saved Account: {}, Owner: {}", "ACCOUNT DELETED", account.getId(), account.getOwnerUserId());
         return account;
     }
 
@@ -97,7 +97,7 @@ public class AccountManagementService {
     @Transactional
     public AccountResponseDto getAccountDtoById(UUID accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found")); // Bessere Exception-Behandlung hier
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
         return mapToAccountResponseDto(account);
     }
@@ -139,4 +139,10 @@ public class AccountManagementService {
         );
     }
 
+    @Transactional
+    public Account getAccountByAccountId(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        return account;
+    }
 }

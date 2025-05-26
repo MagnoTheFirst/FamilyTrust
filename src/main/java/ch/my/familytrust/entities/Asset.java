@@ -65,6 +65,10 @@ public class Asset {
 
     }
 
+    public void updateBalance() {
+
+    }
+
 
     /* TODO[] will not work as expected
     @Formula("(current_price - buy_price) * quantity")
