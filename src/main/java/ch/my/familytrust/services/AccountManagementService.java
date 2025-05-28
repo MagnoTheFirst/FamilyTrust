@@ -168,6 +168,7 @@ public class AccountManagementService {
         return assets.stream().filter(asset -> asset.getAssetId().equals(assetId)).findFirst();
     }
 
+    @Transactional
     //TODO[] Implement check if Asset is really not already present
     public ResponseEntity<Object> insertNewAsset(UUID accountId, Asset asset){
         Optional<Account> account = accountRepository.findById(accountId);
@@ -175,7 +176,7 @@ public class AccountManagementService {
             account.get().addAsset(asset);
             accountRepository.save(account.get());
             accountRepository.flush();
-            return new ResponseEntity<>("Asset added to account", HttpStatus.OK);
+            return new ResponseEntity<>("Asset added to account " + account.get().getAssets().getFirst().toString() , HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);

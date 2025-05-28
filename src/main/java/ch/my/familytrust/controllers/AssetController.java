@@ -42,7 +42,7 @@ public class AssetController {
 
     @GetMapping("/user/{user-id}/account/{account-id}/list/assets")
     public ResponseEntity<Object> getAssets(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
-        return new ResponseEntity<>("ASSET", HttpStatus.OK);
+        return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
     }
 
     @PostMapping("/user/{user-id}/account/{account-id}/asset-transaction")

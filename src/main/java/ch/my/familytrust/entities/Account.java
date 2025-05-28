@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.catalina.User;
 import org.hibernate.Transaction;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 @Table(name = "accounts")
 @Getter
 @Setter
+@ToString
 public class Account {
 
 

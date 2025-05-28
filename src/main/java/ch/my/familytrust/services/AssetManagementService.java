@@ -31,11 +31,14 @@ public class AssetManagementService {
         this.assetRepository = assetRepository;
     }
 
-    public List<Asset> getAssets() {
-        return assetRepository.findAll();
+
+    public List<Asset> getAssets(UUID uuid) {
+        Account account = accountManagementService.getAccountByAccountId(uuid);
+        return accountManagementService.getAssetsFromAccount(account);
     }
 
     public Asset getAsset(Long uuid) {
+
         return assetRepository.findById(uuid).orElse(null);
     }
 
@@ -56,8 +59,8 @@ public class AssetManagementService {
             AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
             newAsset.addAssetTransaction(assetTransaction);
             //TODO[] must be refactored its not really clean
-            accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
-            return new ResponseEntity<>("Asset successfull bought", HttpStatus.OK);
+
+            return             accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
         //TODO[] implement else logic
         else{
