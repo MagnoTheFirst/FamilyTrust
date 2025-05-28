@@ -1,6 +1,7 @@
 package ch.my.familytrust.controllers;
 
 import ch.my.familytrust.dtos.AssetDto;
+import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.services.AccountManagementService;
 import ch.my.familytrust.services.AssetManagementService;
 import lombok.Getter;
@@ -39,6 +40,11 @@ public class AssetController {
         return new ResponseEntity<>("ASSET", HttpStatus.OK);
     }
 
+    @GetMapping("/user/{user-id}/account/{account-id}/list/assets")
+    public ResponseEntity<Object> getAssets(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
+        return new ResponseEntity<>("ASSET", HttpStatus.OK);
+    }
+
     @PostMapping("/user/{user-id}/account/{account-id}/asset-transaction")
     public ResponseEntity<Object> buyAsset(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
         return new ResponseEntity<>("BUY ASSET", HttpStatus.OK);
@@ -46,9 +52,15 @@ public class AssetController {
 
     @PostMapping("/asset-transaction")
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
-        return assetManagementService.buyAsset(assetDto);
+        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)){
+            return assetManagementService.buyAsset(assetDto);
+        }
+        else if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)){
+            return assetManagementService.sellAsset(assetDto);
+        }
+        else{
+            return new ResponseEntity<>("TRANSACTION FAILED", HttpStatus.BAD_REQUEST);
+        }
     }
-
-
 
 }

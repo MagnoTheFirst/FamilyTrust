@@ -77,6 +77,7 @@ public class Account {
 
 
     public Account() {
+        this.accountCurrency  = Currency.getInstance(currencyCode);
         this.active = true;
         this.archived = false;
         this.createdDate =  LocalDateTime.now();

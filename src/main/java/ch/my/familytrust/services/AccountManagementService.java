@@ -5,16 +5,21 @@ import ch.my.familytrust.dtos.AccountCashFlowDto;
 import ch.my.familytrust.dtos.AccountResponseDto;
 import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.AccountCashFlow;
+import ch.my.familytrust.entities.Asset;
+import ch.my.familytrust.entities.AssetTransaction;
 import ch.my.familytrust.enums.CashflowType;
 import ch.my.familytrust.repositories.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -145,4 +150,63 @@ public class AccountManagementService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         return account;
     }
+
+    @Transactional
+    public List<Asset> getAssetsFromAccount(Account account){
+        return account.getAssets();
+    }
+
+    public Optional<Asset> getAssetFromAccountAssetsWithAssetName(List<Asset> assets, String assetName){
+        return assets.stream().filter(asset -> asset.getName().equals(assetName)).findFirst();
+    }
+
+    public Optional<Asset> getAssetFromAccountAssetsWithStockSymbol(List<Asset> assets, String stockSymbol){
+        return assets.stream().filter(asset -> asset.getStockSymbol().equals(stockSymbol)).findFirst();
+    }
+
+    public Optional<Asset> getAssetFromAccountAssetsWithAssetId(List<Asset> assets, UUID assetId){
+        return assets.stream().filter(asset -> asset.getAssetId().equals(assetId)).findFirst();
+    }
+
+    //TODO[] Implement check if Asset is really not already present
+    public ResponseEntity<Object> insertNewAsset(UUID accountId, Asset asset){
+        Optional<Account> account = accountRepository.findById(accountId);
+        if(account.isPresent()){
+            account.get().addAsset(asset);
+            accountRepository.save(account.get());
+            accountRepository.flush();
+            return new ResponseEntity<>("Asset added to account", HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<Object> addAlreadyPresentAssetToAccount(UUID accountId, Asset asset){
+        Optional<Account> account = accountRepository.findById(accountId);
+        if(account.isPresent()){
+            account.get().addAsset(asset);
+            accountRepository.save(account.get());
+            accountRepository.flush();
+            return new ResponseEntity<>("Asset added to account", HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+/*
+    public ResponseEntity<Object> reduceAssetAmount(UUID accountId, UUID assetId){
+        Optional<Account> account = accountRepository.findById(accountId);
+        if(account.isPresent()){
+            Optional<Asset> asset = getAssetFromAccountAssetsWithAssetName(account.get().getAssets(), assetId.toString());
+            if(asset.isPresent()){
+                asset.get().setQuantity(asset.get().getQuantity() - 1);
+                accountRepository.save(account.get());
+                accountRepository.flush();
+                return new ResponseEntity<>("Asset reduced", HttpStatus.OK);
+            }
+        }
+    }
+*/
 }

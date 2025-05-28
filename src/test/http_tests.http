@@ -1,5 +1,5 @@
 ### Account erstellen
-POST http://localhost:8084/api/v1/user/123e4567-e89b-12d3-a456-426614174000/create/account
+POST http://localhost:8084/user/create/account/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Alle Accounts eines Users abrufen
-GET http://localhost:8084/api/v1/user/123e4567-e89b-12d3-a456-426614174000/get/accounts
+GET http://localhost:8084/user/123e4567-e89b-12d3-a456-426614174000/get/accounts
 Accept: application/json
 
 

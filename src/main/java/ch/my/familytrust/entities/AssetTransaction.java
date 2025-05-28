@@ -31,6 +31,10 @@ public class AssetTransaction {
     BigDecimal assetTransactionBalance;
     String comment;
 
+    @ManyToOne
+    @JoinColumn(name = "asset_id")
+    private Asset asset;
+
     public AssetTransaction(LocalDateTime transactionDate, AssetTransactionType assetTransactionType, Double quantity, BigDecimal price, BigDecimal assetTransactionBalance, String comment) {
         this.transactionDate = transactionDate;
         this.assetTransactionType = assetTransactionType;
@@ -48,9 +52,7 @@ public class AssetTransaction {
         this.comment = comment;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "asset_id")
-    private Asset asset;
+
 
 
 }

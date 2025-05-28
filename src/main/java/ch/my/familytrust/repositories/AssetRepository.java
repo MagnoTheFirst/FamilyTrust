@@ -16,4 +16,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     Optional<Asset> findByAssetName(@Param("assetName") String assetName);
 
 
+    @Query("SELECT a FROM Asset a WHERE a.name = :assetName AND a.account.id = :accountId")
+    Optional<Asset> findByAssetNameAndAccountId(@Param("assetName") String assetName, @Param("accountId") UUID accountId);
+
 }

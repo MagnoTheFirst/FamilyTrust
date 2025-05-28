@@ -48,7 +48,7 @@ public class UserAccountController {
      * @param json-request
      *
      * */
-    @PostMapping("/user/create/account")
+    @PostMapping("/user/create/account/{user-id}")
     public ResponseEntity<Object> createUser(@RequestBody CreateAccountRequest request, @PathVariable("user-id") UUID userId){
         Account account = accountManagementService.createAccount(new Account(request.currencyCode(), request.accountName(), request.ownerUserId()));
         accountManagementService.createAccountEntity(request.currencyCode(), request.accountName(), request.ownerUserId());

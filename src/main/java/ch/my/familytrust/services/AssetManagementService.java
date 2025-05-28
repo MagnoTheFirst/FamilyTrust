@@ -1,6 +1,7 @@
 package ch.my.familytrust.services;
 
 import ch.my.familytrust.dtos.AssetDto;
+import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.entities.AssetTransaction;
 import ch.my.familytrust.enums.AssetTransactionType;
@@ -14,19 +15,19 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AssetManagementService {
 
     @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
     AssetRepository assetRepository;
 
+    @Autowired
+    AccountManagementService accountManagementService;
 
-    public AssetManagementService(AccountRepository accountRepository, AssetRepository assetRepository) {
-        this.accountRepository = accountRepository;
+    public AssetManagementService(AccountRepository accountRepository, AccountManagementService accountManagementService) {
+        this.accountManagementService = accountManagementService;
         this.assetRepository = assetRepository;
     }
 
@@ -46,18 +47,27 @@ public class AssetManagementService {
 
     //TODO[] Test this method
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
-        Optional<Asset> asset = assetRepository.findByAssetName(assetDto.name());
-        if (asset.isEmpty()) {
-            asset = Optional.of(new Asset(false, true, new BigDecimal(0), assetDto.quantityBigDecimal(), assetDto.currentPrice(), assetDto.assetType(), assetDto.stockSymbol(), assetDto.name()));
-            assetRepository.save(asset.get());
-            assetRepository.flush();
+
+        Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
+        //TODO[] is assetname really correct or should the id be used? Problem is that I dont know if ID is globaly or per asset assigned to an account
+        Optional<Asset> asset = accountManagementService.getAssetFromAccountAssetsWithAssetName(account.get().getAssets(), assetDto.name());
+        if (asset.isEmpty() && !checkIfAssetAlreadyExist(assetDto.name(), assetDto.accountId())) {
+            Asset newAsset = new Asset(assetDto);
+            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+            newAsset.addAssetTransaction(assetTransaction);
+            //TODO[] must be refactored its not really clean
+            accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
             return new ResponseEntity<>("Asset successfull bought", HttpStatus.OK);
         }
+        //TODO[] implement else logic
         else{
             AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
             asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
-            asset.get().getAssetTransactions().add(assetTransaction);
+            asset.get().setCurrentPrice(assetDto.currentPrice());
+            asset.get().addAssetTransaction(assetTransaction);
             asset.get().updateBalance();
+            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
+            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
             assetRepository.save(asset.get());
             assetRepository.flush();
             return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
@@ -65,21 +75,30 @@ public class AssetManagementService {
     }
 
 
-    //TODO[] Implement Sell Asset
-    public void sellAsset(AssetDto assetDto) {
+
+    public ResponseEntity<Object> sellAsset(AssetDto assetDto) {
+
+        Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
         Optional<Asset> asset = assetRepository.findByAssetName(assetDto.name());
         if (asset.isEmpty()) {
-            asset = Optional.of(new Asset(false, true, new BigDecimal(0), assetDto.quantityBigDecimal(), assetDto.currentPrice(), assetDto.assetType(), assetDto.stockSymbol(), assetDto.name()));
-            assetRepository.save(asset.get());
-            assetRepository.flush();
+            Asset newAsset = new Asset(assetDto);
+            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+            newAsset.addAssetTransaction(assetTransaction);
+            accountManagementService.insertNewAsset(account.get().getId(), newAsset);
+            return new ResponseEntity<>("Asset successfull bought", HttpStatus.OK);
         }
+        //TODO[] implement else logic
         else{
             AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
             asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
-            asset.get().getAssetTransactions().add(assetTransaction);
+            asset.get().setCurrentPrice(assetDto.currentPrice());
+            asset.get().addAssetTransaction(assetTransaction);
             asset.get().updateBalance();
+            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
+            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
             assetRepository.save(asset.get());
             assetRepository.flush();
+            return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
         }
 
     }
@@ -112,5 +131,8 @@ public class AssetManagementService {
         );
     }
 
+    public boolean checkIfAssetAlreadyExist(String assetName, UUID accountId) {
+        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isPresent();
+    }
 
 }

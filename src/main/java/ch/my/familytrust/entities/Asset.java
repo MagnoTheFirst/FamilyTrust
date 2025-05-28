@@ -1,5 +1,6 @@
 package ch.my.familytrust.entities;
 
+import ch.my.familytrust.dtos.AssetDto;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.AssetType;
 import jakarta.persistence.*;
@@ -46,6 +47,8 @@ public class Asset {
     Boolean active;
     Boolean archived;
 
+    BigDecimal investedMoney;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
@@ -61,11 +64,27 @@ public class Asset {
             this.name = name;
             this.assetId = assetId;
             this.assetTransactions = new ArrayList<>();
+            this.investedMoney = BigDecimal.ZERO;
 
 
     }
 
+    public Asset(AssetDto dto) {
+        this.archived = false;
+        this.active = true;
+        this.assetBalance = new BigDecimal(0);
+        this.quantity = dto.quantityBigDecimal();
+        this.currentPrice = dto.currentPrice();
+        this.assetType = dto.assetType() == null ? AssetType.STOCK : dto.assetType();
+        this.stockSymbol = dto.stockSymbol();
+        this.name = dto.name();
+        this.assetId = dto.assetId();
+        this.assetTransactions = new ArrayList<>();
+        this.investedMoney = dto.currentPrice().multiply(BigDecimal.valueOf(dto.quantityBigDecimal()));
+    }
+
     public Asset() {
+
         this.assetTransactions = new ArrayList<>();
     }
 
@@ -74,14 +93,15 @@ public class Asset {
     }
 
 
-    /* TODO[] will not work as expected
-    @Formula("(current_price - buy_price) * quantity")
-    private Double profitLoss;
-
+    /*
+    @Formula("(current_price * quantity) - investedMoney")
+    private BigDecimal profitLoss;*/
+/*
     @Formula("((current_price - buyPrice) / buyPrice) * 100")
-    private Double profitLossPercentage;
+    private BigDecimal profitLossPercentage;
 */
-
-
+    public void addAssetTransaction(AssetTransaction transaction) {
+        this.assetTransactions.add(transaction);
+    }
 
 }
