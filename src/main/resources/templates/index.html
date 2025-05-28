@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FamilyTrust Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1, h2 { font-weight: 600; }
+        .btn { border-radius: .5rem; }
+        table { background: white; border-radius: .5rem; overflow: hidden; }
+    </style>
+</head>
+
+<body class="container py-4">
+<h1 class="mb-4 text-center">📊 FamilyTrust Portfolio Dashboard</h1>
+
+<!-- Dashboard -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Investiertes Kapital</h5>
+            <h3 id="totalInvested">0 CHF</h3>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Marktwert</h5>
+            <h3 id="totalValue">0 CHF</h3>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card p-3">
+            <h5>Realisiert Gewinn / Verlust</h5>
+            <h3 id="realizedProfit">0 CHF</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Forms -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h2 class="h5">Asset kaufen</h2>
+            <form id="buyForm">
+                <input class="form-control mb-2" name="name" placeholder="Name" required>
+                <input class="form-control mb-2" name="symbol" placeholder="Symbol" required>
+                <input class="form-control mb-2" name="author" placeholder="Author" required minlength="3" maxlength="20">
+                <select class="form-control mb-2" name="investmentType" required>
+                    <option value="">Investment Type wählen</option>
+                    <option value="STOCK">Stock</option>
+                    <option value="ETF">ETF</option>
+                    <option value="CRYPTOCURRENCY">Crypto</option>
+                    <option value="PHYSICAL_GOLD">Physical Gold</option>
+                    <option value="PHYSICAL_SILVER">Physical Silver</option>
+                    <option value="EURO">Euro</option>
+                    <option value="CHF">CHF</option>
+                </select>
+                <select class="form-control mb-2" name="tag" required>
+                    <option value="">Tag wählen</option>
+                    <option value="FAMILY_TRUST">Family Trust</option>
+                    <option value="ALE_IVESTMENT">Ale Investment</option>
+                    <option value="JESSI_INVESTMENT">Jessi Investment</option>
+                    <option value="PHYSICAL_SAFE">Physical Safe</option>
+                </select>
+                <input class="form-control mb-2" name="comment" placeholder="Kommentar">
+                <input class="form-control mb-2" name="cash_in_price" type="number" step="0.01" placeholder="Total Investiert (CHF)" required>
+                <input class="form-control mb-2" name="units_bought" type="number" step="0.01" placeholder="Anzahl Einheiten" required>
+                <input class="form-control mb-2" name="price_per_unit_buy" type="number" step="0.01" placeholder="Kaufpreis pro Einheit" required>
+                <button class="btn btn-success w-100" type="submit">Kaufen</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h2 class="h5">Asset verkaufen</h2>
+            <form id="sellForm">
+                <input class="form-control mb-2" name="symbol" placeholder="Symbol" required>
+                <input class="form-control mb-2" name="author" placeholder="Author" required minlength="3" maxlength="20">
+                <input class="form-control mb-2" name="cash_out_price" type="number" step="0.01" placeholder="Total Verkauf (CHF)" required>
+                <input class="form-control mb-2" name="price_per_unit_sell" type="number" step="0.01" placeholder="Verkaufspreis pro Einheit" required>
+                <button class="btn btn-danger w-100" type="submit">Verkaufen</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Tabelle -->
+<div class="card p-3">
+    <h2 class="h5">Transaktions-Historie</h2>
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>Typ</th><th>Name</th><th>Symbol</th><th>Author</th><th>Investment</th><th>Tag</th><th>Kommentar</th><th>Betrag</th><th>Einheiten</th><th>Preis/Einheit (Buy)</th><th>Preis/Einheit (Sell)</th><th>Datum</th>
+        </tr>
+        </thead>
+        <tbody id="stockTable"></tbody>
+    </table>
+</div>
+
+<script>
+    function loadStocks() {
+        fetch('/stocks/getStocks')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('stockTable');
+                tbody.innerHTML = '';
+                data.forEach(tx => {
+                    const row = `<tr>
+                        <td>${tx.transactionType}</td>
+                        <td>${tx.name || ''}</td>
+                        <td>${tx.symbol || ''}</td>
+                        <td>${tx.author || ''}</td>
+                        <td>${tx.investmentType || ''}</td>
+                        <td>${tx.tag || ''}</td>
+                        <td>${tx.comment || ''}</td>
+                        <td>${tx.cash_in_price || 0}</td>
+                        <td>${tx.units_bought || 0}</td>
+                        <td>${tx.price_per_unit_buy || 0}</td>
+                        <td>${tx.price_per_unit_sell || 0}</td>
+                        <td>${tx.date || ''}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            });
+    }
+
+    loadStocks();
+
+    document.getElementById('buyForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const payload = {};
+        formData.forEach((value, key) => payload[key] = isNaN(value) ? value : parseFloat(value));
+        payload.transactionType = "BUY";
+        payload.transactionStatus = "ACTIVE";
+        payload.date = new Date().toISOString();
+        payload.cash_out_price = 0;
+        payload.price_per_unit_sell = 0;
+
+        fetch('/stocks/buy', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        }).then(() => { loadStocks(); this.reset(); });
+    });
+
+    document.getElementById('sellForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const payload = {};
+        formData.forEach((value, key) => payload[key] = isNaN(value) ? value : parseFloat(value));
+        payload.transactionType = "SELL";
+        payload.transactionStatus = "SOLD";
+        payload.date = new Date().toISOString();
+
+        fetch('/stocks/buy', { // Selber Endpoint weil es technisch ein Update im Model ist
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        }).then(() => { loadStocks(); this.reset(); });
+    });
+</script>
+</body>
+</html>

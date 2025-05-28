@@ -1,0 +1,31 @@
+<!-- stock-form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{templates/layout :: layout}">
+<section>
+    <h2>Neuen Stock anlegen</h2>
+    <form th:action="@{/stocks/save}" th:object="${stock}" method="post">
+        <div class="mb-3">
+            <label>Name</label>
+            <input type="text" class="form-control" th:field="*{name}" required>
+        </div>
+        <div class="mb-3">
+            <label>Author</label>
+            <input type="text" class="form-control" th:field="*{author}" required>
+        </div>
+        <div class="mb-3">
+            <label>Investment Type</label>
+            <select class="form-select" th:field="*{investmentType}">
+                <option>STOCK</option>
+                <option>ETF</option>
+                <option>CRYPTOCURRENCY</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Amount</label>
+            <input type="number" class="form-control" th:field="*{amount}" required>
+        </div>
+        <button class="btn btn-success">Speichern</button>
+    </form>
+</section>
+</html>
