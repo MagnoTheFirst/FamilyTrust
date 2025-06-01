@@ -175,18 +175,18 @@ public class AccountManagementService {
     public ResponseEntity<Object> insertNewAsset(UUID accountId, Asset asset){
         Optional<Account> account = accountRepository.findById(accountId);
 
-        System.out.println("AssetManagementService.buyAsset: 6 ");
+        System.out.println("AccountManagementServcie.insertNewAsset: 1 ");
         if(account.isPresent()){
 
-            System.out.println("AssetManagementService.buyAsset: 7 ");
+            System.out.println("AccountManagementServcie.insertNewAsset: 2 ");
             account.get().addAsset(asset);
             accountRepository.save(account.get());
 
-            System.out.println("AssetManagementService.buyAsset: 8 ");
+            System.out.println("AccountManagementServcie.insertNewAsset: 3 ");
             accountRepository.flush();
 
-            System.out.println("AssetManagementService.buyAsset: 9 ");
-            return new ResponseEntity<>("Asset created and added to account " + account.get().getAssets().getFirst().getName().toString() , HttpStatus.OK);
+            System.out.println("AccountManagementServcie.insertNewAsset: 4 ");
+            return new ResponseEntity<>("Asset created and added to account ", HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);

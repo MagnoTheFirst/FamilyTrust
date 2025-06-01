@@ -34,7 +34,12 @@ public class AssetManagementService {
 
     public List<Asset> getAssets(UUID uuid) {
         Account account = accountManagementService.getAccountByAccountId(uuid);
-        return assetRepository.findAll(); //accountManagementService.getAssetsFromAccount(account);
+        return assetRepository.findByAccountId(uuid); //accountManagementService.getAssetsFromAccount(account);
+    }
+
+    public List<Asset> getAssetsByUserId(UUID uuid) {
+        Account account = accountManagementService.getAccountByAccountId(uuid);
+        return assetRepository.findByAccountId(uuid); //accountManagementService.getAssetsFromAccount(account);
     }
 
     public Asset getAsset(Long uuid) {
@@ -52,22 +57,24 @@ public class AssetManagementService {
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
         System.out.println("AssetManagementService.buyAsset: 1 " + assetDto);
         Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
-        System.out.println("AssetManagementService.buyAsset: 2 " + assetDto);
+        System.out.println("AssetManagementService.buyAsset: 2 is account empty" + account.isEmpty());
         //TODO[] is assetname really correct or should the id be used? Problem is that I dont know if ID is globaly or per asset assigned to an account
-        Optional<Asset> asset = accountManagementService.getAssetFromAccountAssetsWithAssetName(account.get().getAssets(), assetDto.name());
+        System.out.println("AssetManagementService.buyAsset: 3 " + assetDto.name() + " " + assetDto.accountId());
+        List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
+        System.out.println("AssetManagementService.buyAsset: 4 is assets empty " + assets.isEmpty() + " !isAssetPresent() " + !isAssetPresent(assetDto.name(), assetDto.accountId()));
 
-        System.out.println("AssetManagementService.buyAsset: 3 " + assetDto);
-        if (asset.isEmpty()) {
+        if (assets.isEmpty() || !isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
 
-            System.out.println("AssetManagementService.buyAsset: 4 " + assetDto);
+            System.out.println("AssetManagementService.buyAsset: 5 " + assetDto);
             AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
 
-            System.out.println("AssetManagementService.buyAsset: 5 " + assetDto);
+            System.out.println("AssetManagementService.buyAsset: 6 " + assetDto);
             newAsset.addAssetTransaction(assetTransaction);
             account.get().getAssets().add(newAsset);
-
-            System.out.println("AssetManagementService.buyAsset: 6" + assetDto);
+            assetRepository.save(newAsset);
+            assetRepository.flush();
+            System.out.println("AssetManagementService.buyAsset: 7" + assetDto);
             //TODO[] must be refactored its not really clean
 
             return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
@@ -136,8 +143,8 @@ public class AssetManagementService {
         );
     }
 
-    public boolean checkIfAssetAlreadyExist(String assetName, UUID accountId) {
-        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isPresent();
+    public boolean isAssetPresent(String assetName, UUID accountId) {
+        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isEmpty();
     }
 
 }

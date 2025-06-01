@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,5 +19,10 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query("SELECT a FROM Asset a WHERE a.name = :assetName AND a.account.id = :accountId")
     Optional<Asset> findByAssetNameAndAccountId(@Param("assetName") String assetName, @Param("accountId") UUID accountId);
+
+
+    @Query("SELECT a FROM Asset a WHERE a.account.id = ?1")
+    List<Asset> findByAccountId(UUID accountId);
+
 
 }

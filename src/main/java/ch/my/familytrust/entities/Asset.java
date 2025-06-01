@@ -80,6 +80,8 @@ public class Asset {
         this.name = dto.name();
         this.assetId = dto.assetId();
         this.assetTransactions = new ArrayList<>();
+        this.account = new Account();
+        this.account.setId(dto.accountId());
         this.investedMoney = dto.currentPrice().multiply(BigDecimal.valueOf(dto.quantityBigDecimal()));
     }
 
