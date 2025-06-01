@@ -45,13 +45,8 @@ public class AssetController {
         return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
     }
 
-    @PostMapping("/user/{user-id}/account/{account-id}/asset-transaction")
-    public ResponseEntity<Object> buyAsset(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
-        return new ResponseEntity<>("BUY ASSET", HttpStatus.OK);
-    }
-
     @PostMapping("/asset-transaction")
-    public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
+    public ResponseEntity<Object> buyOrSellAsset(AssetDto assetDto) {
         if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)){
             return assetManagementService.buyAsset(assetDto);
         }

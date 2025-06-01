@@ -34,7 +34,7 @@ public class AssetManagementService {
 
     public List<Asset> getAssets(UUID uuid) {
         Account account = accountManagementService.getAccountByAccountId(uuid);
-        return accountManagementService.getAssetsFromAccount(account);
+        return assetRepository.findAll(); //accountManagementService.getAssetsFromAccount(account);
     }
 
     public Asset getAsset(Long uuid) {
@@ -50,29 +50,31 @@ public class AssetManagementService {
 
     //TODO[] Test this method
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
-
+        System.out.println("AssetManagementService.buyAsset: 1 " + assetDto);
         Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
+        System.out.println("AssetManagementService.buyAsset: 2 " + assetDto);
         //TODO[] is assetname really correct or should the id be used? Problem is that I dont know if ID is globaly or per asset assigned to an account
         Optional<Asset> asset = accountManagementService.getAssetFromAccountAssetsWithAssetName(account.get().getAssets(), assetDto.name());
-        if (asset.isEmpty() && !checkIfAssetAlreadyExist(assetDto.name(), assetDto.accountId())) {
+
+        System.out.println("AssetManagementService.buyAsset: 3 " + assetDto);
+        if (asset.isEmpty()) {
             Asset newAsset = new Asset(assetDto);
+
+            System.out.println("AssetManagementService.buyAsset: 4 " + assetDto);
             AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+
+            System.out.println("AssetManagementService.buyAsset: 5 " + assetDto);
             newAsset.addAssetTransaction(assetTransaction);
+            account.get().getAssets().add(newAsset);
+
+            System.out.println("AssetManagementService.buyAsset: 6" + assetDto);
             //TODO[] must be refactored its not really clean
 
-            return             accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
+            return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
         //TODO[] implement else logic
         else{
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
-            asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
-            asset.get().setCurrentPrice(assetDto.currentPrice());
-            asset.get().addAssetTransaction(assetTransaction);
-            asset.get().updateBalance();
-            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
-            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
-            assetRepository.save(asset.get());
-            assetRepository.flush();
+
             return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
         }
     }

@@ -1,6 +1,7 @@
 package ch.my.familytrust.repositories;
 
 import ch.my.familytrust.entities.Account;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +22,8 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
 
     List<Account> findByOwnerUserId(UUID ownerUserId);
 
-    Optional<Account> findById(UUID id);
+    @NotNull Optional<Account> findById(UUID id);
+
+
 
 }
