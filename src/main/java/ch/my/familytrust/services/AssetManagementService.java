@@ -49,7 +49,7 @@ public class AssetManagementService {
         return assetRepository.findById(uuid).orElse(null);
     }
 
-    public AssetDto getAssetDto(Long uuid) {
+    public AssetDto getAssetDtoByAssetId(Long uuid) {
         Asset asset = getAsset(uuid);
         return mapAssetToAssetDto(asset, AssetTransactionType.STOCK_BUY);
     }
@@ -65,7 +65,7 @@ public class AssetManagementService {
         List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
         System.out.println("AssetManagementService.buyAsset: 4 is assets empty " + assets.isEmpty() + " !isAssetPresent() " + !isAssetPresent(assetDto.name(), assetDto.accountId()));
 
-        if (assets.isEmpty() || !isAssetPresent(assetDto.name(), assetDto.accountId())) {
+        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
 
             System.out.println("AssetManagementService.buyAsset: 5 " + assetDto);
@@ -81,9 +81,14 @@ public class AssetManagementService {
 
             return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
-        //TODO[] implement else logic
         else{
-
+            Asset asset = assetRepository.findByAssetName(assetDto.name()).orElse(null);
+            asset.setCurrentPrice(assetDto.currentPrice());
+            asset.setQuantity(asset.getQuantity() + assetDto.quantityBigDecimal());
+            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
+            asset.getAssetTransactions().add(assetTransaction);
+            assetRepository.save(asset);
+            assetRepository.flush();
             return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
         }
     }
