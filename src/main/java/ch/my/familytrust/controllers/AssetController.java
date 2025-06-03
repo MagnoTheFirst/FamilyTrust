@@ -1,10 +1,12 @@
 package ch.my.familytrust.controllers;
 
 import ch.my.familytrust.dtos.AssetDto;
+import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.services.AccountManagementService;
 import ch.my.familytrust.services.AssetManagementService;
+import ch.my.familytrust.services.AssetTransactionService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,9 @@ public class AssetController {
     @Autowired
     AccountManagementService accountManagementService;
 
+    @Autowired
+    AssetTransactionService assetTransactionService;
+
     public AssetController(AssetManagementService assetManagementService) {
         this.assetManagementService = assetManagementService;
     }
@@ -44,6 +49,12 @@ public class AssetController {
     @GetMapping("/user/{user-id}/account/{account-id}/list/assets")
     public ResponseEntity<Object> getAssets(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
         return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{user-id}/account/{account-id}/list/assetTransactions/{asset-id}")
+    public ResponseEntity<Object> getAssetTransactionList(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId, @PathVariable("asset-id") Long assetId){
+        Asset asset = assetManagementService.getAsset(assetId);
+        return new ResponseEntity<>(assetTransactionService.getAssetTransactions(accountId, asset.getAssetId()), HttpStatus.OK);
     }
 
     @GetMapping("/user/{user-id}/account/{account-id}/list/asset-types/{asset-type}")
