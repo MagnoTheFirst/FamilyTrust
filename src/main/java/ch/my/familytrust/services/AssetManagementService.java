@@ -54,6 +54,16 @@ public class AssetManagementService {
         return mapAssetToAssetDto(asset, AssetTransactionType.STOCK_BUY);
     }
 
+    public ResponseEntity<Object> newAssetTransaction(AssetDto assetDto) {
+        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)) {
+            return buyAsset(assetDto);
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)) {
+            return sellAsset(assetDto);
+        }
+
+        return null;
+    }
+
 
     //TODO[] Test this method
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
@@ -97,27 +107,25 @@ public class AssetManagementService {
 
     public ResponseEntity<Object> sellAsset(AssetDto assetDto) {
 
-        Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
+
         Optional<Asset> asset = assetRepository.findByAssetName(assetDto.name());
         if (asset.isEmpty()) {
-            Asset newAsset = new Asset(assetDto);
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
-            newAsset.addAssetTransaction(assetTransaction);
-            accountManagementService.insertNewAsset(account.get().getId(), newAsset);
-            return new ResponseEntity<>("Asset successfull bought", HttpStatus.OK);
+
+            return new ResponseEntity<>("Asset not found", HttpStatus.NOT_FOUND);
         }
         //TODO[] implement else logic
         else{
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
-            asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
+            asset.get().setQuantity(asset.get().getQuantity() - assetDto.quantityBigDecimal());
             asset.get().setCurrentPrice(assetDto.currentPrice());
-            asset.get().addAssetTransaction(assetTransaction);
+
             asset.get().updateBalance();
+            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_SELL, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
+            asset.get().addAssetTransaction(assetTransaction);
             BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
             asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
             assetRepository.save(asset.get());
             assetRepository.flush();
-            return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
+            return new ResponseEntity<>("Asset transaction completed", HttpStatus.OK);
         }
 
     }
