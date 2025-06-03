@@ -20,11 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
-//TODO[] implement getStocks
-//TODO[] implement getPhysicalAssets
-//TODO[] implement getCrypto
-//TODO[] implement getETFs
-
+//TODO[] REMOVE CASH AS ASSET TYPE
 @Service
 public class AssetManagementService {
 
@@ -71,9 +67,21 @@ public class AssetManagementService {
             return buyAsset(assetDto);
         } else if (assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)) {
             return sellAsset(assetDto);
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.CRYPTO_CURRENCY_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_SELL)) {
+            return null;
+        } else{
+            return new ResponseEntity<>("UNKNOWN TRANSACTION",HttpStatus.BAD_REQUEST);
         }
-
-        return null;
     }
 
 
