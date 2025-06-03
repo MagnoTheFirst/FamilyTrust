@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AssetManagementService {
@@ -32,9 +33,10 @@ public class AssetManagementService {
     }
 
 
-    public List<Asset> getAssets(UUID uuid) {
+    public List<AssetDto> getAssets(UUID uuid) {
         Account account = accountManagementService.getAccountByAccountId(uuid);
-        return assetRepository.findByAccountId(uuid); //accountManagementService.getAssetsFromAccount(account);
+        return assetRepository.findByAccountId(uuid).stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
+                .map(this::mapAssetToAssetDto).collect(Collectors.toList());
     }
 
     public List<Asset> getAssetsByUserId(UUID uuid) {
@@ -122,6 +124,20 @@ public class AssetManagementService {
                 asset.getStockSymbol(),
                 asset.getAssetType(),
                 assetTransactionType,
+                asset.getCurrentPrice(),
+                asset.getQuantity(),
+                asset.getAccount().getId(),
+                ""
+        );
+    }
+
+    public AssetDto mapAssetToAssetDto(Asset asset) {
+        return new AssetDto(
+                asset.getAssetId(),
+                asset.getName(),
+                asset.getStockSymbol(),
+                asset.getAssetType(),
+                AssetTransactionType.STOCK_BUY,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
                 asset.getAccount().getId(),

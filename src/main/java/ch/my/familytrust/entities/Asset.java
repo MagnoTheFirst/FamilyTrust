@@ -3,6 +3,7 @@ package ch.my.familytrust.entities;
 import ch.my.familytrust.dtos.AssetDto;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.AssetType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -51,6 +52,7 @@ public class Asset {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIgnore
     private Account account;
 
     public Asset(Boolean archived, Boolean active, BigDecimal assetBalance, Double amount, BigDecimal currentPrice, AssetType assetType, String stockSymbol, String name) {
