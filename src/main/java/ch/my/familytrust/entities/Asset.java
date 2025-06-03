@@ -31,7 +31,9 @@ public class Asset {
     String name;
 
     String stockSymbol;
+
     @NotNull
+    @Enumerated(EnumType.STRING)
     AssetType assetType;
 
     BigDecimal currentPrice;

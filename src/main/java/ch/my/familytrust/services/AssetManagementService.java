@@ -5,6 +5,7 @@ import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.entities.AssetTransaction;
 import ch.my.familytrust.enums.AssetTransactionType;
+import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.repositories.AccountRepository;
 import ch.my.familytrust.repositories.AssetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+
+//TODO[] implement getStocks
+//TODO[] implement getPhysicalAssets
+//TODO[] implement getCrypto
+//TODO[] implement getETFs
 
 @Service
 public class AssetManagementService {
@@ -36,6 +43,11 @@ public class AssetManagementService {
     public List<AssetDto> getAssets(UUID uuid) {
         Account account = accountManagementService.getAccountByAccountId(uuid);
         return assetRepository.findByAccountId(uuid).stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
+                .map(this::mapAssetToAssetDto).collect(Collectors.toList());
+    }
+
+    public List<AssetDto> getSpecificAssetType(AssetType assetType) {
+        return assetRepository.findAssetByAssetType(assetType).stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
                 .map(this::mapAssetToAssetDto).collect(Collectors.toList());
     }
 

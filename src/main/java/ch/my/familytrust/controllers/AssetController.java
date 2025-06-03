@@ -2,6 +2,7 @@ package ch.my.familytrust.controllers;
 
 import ch.my.familytrust.dtos.AssetDto;
 import ch.my.familytrust.enums.AssetTransactionType;
+import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.services.AccountManagementService;
 import ch.my.familytrust.services.AssetManagementService;
 import lombok.Getter;
@@ -43,6 +44,11 @@ public class AssetController {
     @GetMapping("/user/{user-id}/account/{account-id}/list/assets")
     public ResponseEntity<Object> getAssets(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
         return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{user-id}/account/{account-id}/list/asset-types/{asset-type}")
+    public ResponseEntity<Object> listSpecificAssetTypes(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId, @PathVariable("asset-type") AssetType assetType){
+        return new ResponseEntity<>(assetManagementService.getSpecificAssetType(assetType), HttpStatus.OK);
     }
 
     @PostMapping("/asset-transaction")

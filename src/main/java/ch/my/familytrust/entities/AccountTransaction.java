@@ -2,6 +2,7 @@ package ch.my.familytrust.entities;
 
 import ch.my.familytrust.enums.TransactionType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,8 @@ public class AccountTransaction {
 
     String comment;
     LocalDateTime transactionDate;
+    @NotNull
+    @Enumerated(EnumType.STRING)
     TransactionType transactionType;
     BigDecimal amount;
 

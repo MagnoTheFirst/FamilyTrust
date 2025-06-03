@@ -3,6 +3,7 @@ package ch.my.familytrust.entities;
 
 import ch.my.familytrust.enums.CashflowType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,8 @@ public class AccountCashFlow {
 
     BigDecimal cashFlowAmount;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
     CashflowType cashFlowType;
 
     String comment;

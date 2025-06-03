@@ -25,6 +25,8 @@ public class AssetTransaction {
 
     @CreationTimestamp
     LocalDateTime transactionDate;
+    @NotNull
+    @Enumerated(EnumType.STRING)
     AssetTransactionType assetTransactionType;
     Double quantity;
     BigDecimal price;

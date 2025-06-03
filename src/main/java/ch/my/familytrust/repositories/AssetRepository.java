@@ -1,6 +1,8 @@
 package ch.my.familytrust.repositories;
 
 import ch.my.familytrust.entities.Asset;
+import ch.my.familytrust.enums.AssetTransactionType;
+import ch.my.familytrust.enums.AssetType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +25,9 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query("SELECT a FROM Asset a WHERE a.account.id = ?1")
     List<Asset> findByAccountId(UUID accountId);
+
+    @Query("SELECT a FROM Asset a WHERE a.assetType = :assetType")
+    List<Asset> findAssetByAssetType(@Param("assetType") AssetType assetType);
 
 
 }
