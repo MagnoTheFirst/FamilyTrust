@@ -51,10 +51,12 @@ public class AssetController {
         return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
     }
 
+    //TODO[] Prototype cleancode if it works
     @GetMapping("/user/{user-id}/account/{account-id}/list/assetTransactions/{asset-id}")
     public ResponseEntity<Object> getAssetTransactionList(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId, @PathVariable("asset-id") Long assetId){
         Asset asset = assetManagementService.getAsset(assetId);
-        return new ResponseEntity<>(assetTransactionService.getAssetTransactions(accountId, asset.getAssetId()), HttpStatus.OK);
+        System.out.println(asset.getAssetTransactions().isEmpty());
+        return new ResponseEntity<>(assetTransactionService.getAssetTransactions(asset), HttpStatus.OK);
     }
 
     @GetMapping("/user/{user-id}/account/{account-id}/list/asset-types/{asset-type}")

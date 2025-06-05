@@ -1,6 +1,8 @@
 package ch.my.familytrust.services;
 
 import ch.my.familytrust.dtos.AssetTransactionDto;
+import ch.my.familytrust.dtos.GetAssetRequest;
+import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.entities.AssetTransaction;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.repositories.AssetRepository;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+//TODO[] change mapAssetTransactionToDto to mapGetAssetTransactionRequest
 @Service
 public class AssetTransactionService {
 
@@ -23,9 +25,23 @@ public class AssetTransactionService {
 
     @Autowired
     AssetTransactionRepository assetTransactionRepository;
+    @Autowired
+    private AccountManagementService accountManagementService;
 
-    public List<AssetTransactionDto> getAssetTransactions(UUID accountId, Long assetId){
+    public List<GetAssetRequest> old_getAssetTransactions(UUID accountId, Long assetId){
         Optional<AssetTransaction> assetTransactions = assetTransactionRepository.findByAssetTransactionNameAndAccountId(assetId, accountId);
+        return assetTransactions.stream()
+                .map(this::mapAssetTransactionToDto).collect(Collectors.toList());
+    }
+
+    public List<GetAssetRequest> getAssetTransactions(Long assetId){
+        List<AssetTransaction> assetTransactions = assetManagementService.getAsset(assetId).getAssetTransactions();
+        return assetTransactions.stream()
+                .map(this::mapAssetTransactionToDto).collect(Collectors.toList());
+    }
+
+    public List<GetAssetRequest> getAssetTransactions(Asset asset){
+        List<AssetTransaction> assetTransactions = asset.getAssetTransactions();
         return assetTransactions.stream()
                 .map(this::mapAssetTransactionToDto).collect(Collectors.toList());
     }
@@ -42,13 +58,16 @@ public class AssetTransactionService {
         return balance;
     }
 
-    public AssetTransactionDto mapAssetTransactionToDto(AssetTransaction assetTransaction){
-        return new AssetTransactionDto(assetTransaction.getAssetTransactionId(),
-                assetTransaction.getTransactionDate(),
+    public GetAssetRequest mapAssetTransactionToDto(AssetTransaction assetTransaction){
+        return new GetAssetRequest(
+                assetTransaction.getAssetTransactionId(),
+                assetTransaction.getAsset().getName(),
+                assetTransaction.getAsset().getStockSymbol(),
+                assetTransaction.getAsset().getAssetType(),
                 assetTransaction.getAssetTransactionType(),
-                assetTransaction.getQuantity(),
+                assetTransaction.getComment(),
+                assetTransaction.getTransactionDate(),
                 assetTransaction.getPrice(),
-                assetTransaction.getAssetTransactionBalance(),
-                assetTransaction.getComment(), assetTransaction.getAsset().getName());
+                assetTransaction.getAssetTransactionBalance());
     }
 }
