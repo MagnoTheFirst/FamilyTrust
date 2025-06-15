@@ -125,5 +125,4 @@ public class Asset {
         }
         return assetBalance;
     }
-
 }
