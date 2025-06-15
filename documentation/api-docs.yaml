@@ -1,0 +1,554 @@
+openapi: 3.0.1
+info:
+  title: '"test"'
+  description: '"test description"'
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: '"1.0"'
+servers:
+- url: http://localhost:8084
+  description: Generated server url
+paths:
+  /user/create/account/{user-id}:
+    post:
+      tags:
+      - user-account-controller
+      operationId: createUser
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/account/cashFlowTransaction:
+    post:
+      tags:
+      - user-account-controller
+      operationId: accountTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountCashFlowRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /create/user:
+    post:
+      tags:
+      - admin-controller
+      operationId: createUser_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /asset-transaction:
+    post:
+      tags:
+      - asset-controller
+      operationId: buyOrSellAsset
+      parameters:
+      - name: assetDto
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/AssetDto"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/change/account:
+    patch:
+      tags:
+      - user-account-controller
+      operationId: changeUser
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /change/user:
+    patch:
+      tags:
+      - admin-controller
+      operationId: changeUser_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /users:
+    get:
+      tags:
+      - admin-controller
+      operationId: getUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/get/accounts:
+    get:
+      tags:
+      - user-account-controller
+      operationId: getAccounts
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccountResponseDto"
+  /user/{user-id}/get/accounts1:
+    get:
+      tags:
+      - user-account-controller
+      operationId: getUsers1
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/get/account/{account-id}:
+    get:
+      tags:
+      - user-account-controller
+      operationId: getAccount
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: account-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/account/{account-id}/list/assets:
+    get:
+      tags:
+      - asset-controller
+      operationId: getAssets
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: account-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/account/{account-id}/list/asset-types/{asset-type}:
+    get:
+      tags:
+      - asset-controller
+      operationId: listSpecificAssetTypes
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: account-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: asset-type
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - STOCK
+          - ETF
+          - PHYSICAL_ASSET
+          - CRYPTO_CURRENCY
+          - CASH
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/account/{account-id}/asset/{asset-id}:
+    get:
+      tags:
+      - asset-controller
+      operationId: getAsset
+      parameters:
+      - name: user-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: account-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: asset-id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /account/{account-id}/list/assetTransactions/{asset-name}:
+    get:
+      tags:
+      - asset-controller
+      operationId: getAssetTransactionList
+      parameters:
+      - name: account-id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: asset-name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /user/{user-id}/delete/account/{account-id}:
+    delete:
+      tags:
+      - user-account-controller
+      operationId: deleteUserAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteAccountRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /delete/user:
+    delete:
+      tags:
+      - admin-controller
+      operationId: deleteUser
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+components:
+  schemas:
+    CreateAccountRequest:
+      type: object
+      properties:
+        accountName:
+          type: string
+        currencyCode:
+          type: string
+        ownerUserId:
+          type: string
+          format: uuid
+    AccountCashFlowRequest:
+      type: object
+      properties:
+        cashFlowDate:
+          type: string
+          format: date-time
+        accountId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        cashFlowAmount:
+          type: number
+        cashFlowType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          - DIVIDEND_PAYMENT
+        comment:
+          type: string
+    AssetDto:
+      type: object
+      properties:
+        assetId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        stockSymbol:
+          type: string
+        assetType:
+          type: string
+          enum:
+          - STOCK
+          - ETF
+          - PHYSICAL_ASSET
+          - CRYPTO_CURRENCY
+          - CASH
+        assetTransactionType:
+          type: string
+          enum:
+          - STOCK_BUY
+          - STOCK_SELL
+          - ETF_BUY
+          - ETF_SELL
+          - PHYSICAL_ASSET_BUY
+          - PHYSICAL_ASSET_SELL
+          - CRYPTO_CURRENCY_BUY
+          - CRYPTO_CURRENCY_SELL
+        currentPrice:
+          type: number
+        quantityBigDecimal:
+          type: number
+          format: double
+        assetBalance:
+          type: number
+        accountId:
+          type: string
+          format: uuid
+        comment:
+          type: string
+    AccountCashFlowDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountName:
+          type: string
+        currencyCode:
+          type: string
+        amount:
+          type: number
+        ownerUserId:
+          type: string
+          format: uuid
+        cashflowType:
+          type: string
+          enum:
+          - DEPOSIT
+          - WITHDRAWAL
+          - DIVIDEND_PAYMENT
+        comment:
+          type: string
+        cashflowDate:
+          type: string
+          format: date-time
+    AccountResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountName:
+          type: string
+        currencyCode:
+          type: string
+        ownerUserId:
+          type: string
+          format: uuid
+        investedMoney:
+          type: number
+        balance:
+          type: number
+        lasAccessDate:
+          type: string
+          format: date-time
+        createdDate:
+          type: string
+          format: date-time
+        availableMoney:
+          type: number
+        cashFlowList:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountCashFlowDto"
+        assets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Asset"
+    Asset:
+      required:
+      - assetType
+      - name
+      - quantity
+      type: object
+      properties:
+        assetId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        stockSymbol:
+          type: string
+        assetType:
+          type: string
+          enum:
+          - STOCK
+          - ETF
+          - PHYSICAL_ASSET
+          - CRYPTO_CURRENCY
+          - CASH
+        currentPrice:
+          type: number
+        quantity:
+          type: number
+          format: double
+        assetBalance:
+          type: number
+        assetTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssetTransaction"
+        active:
+          type: boolean
+        archived:
+          type: boolean
+        investedMoney:
+          type: number
+        unrealizedProfitLoss:
+          type: number
+        realizedProfitLoss:
+          type: number
+        transactionBalance:
+          type: number
+    AssetTransaction:
+      required:
+      - assetTransactionType
+      type: object
+      properties:
+        assetTransactionId:
+          type: integer
+          format: int64
+        transactionDate:
+          type: string
+          format: date-time
+        assetTransactionType:
+          type: string
+          enum:
+          - STOCK_BUY
+          - STOCK_SELL
+          - ETF_BUY
+          - ETF_SELL
+          - PHYSICAL_ASSET_BUY
+          - PHYSICAL_ASSET_SELL
+          - CRYPTO_CURRENCY_BUY
+          - CRYPTO_CURRENCY_SELL
+        quantity:
+          type: number
+          format: double
+        price:
+          type: number
+        assetTransactionBalance:
+          type: number
+        comment:
+          type: string
+        asset:
+          $ref: "#/components/schemas/Asset"
+    DeleteAccountRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
