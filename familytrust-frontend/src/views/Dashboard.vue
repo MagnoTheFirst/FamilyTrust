@@ -1,0 +1,42 @@
+<template>
+  <div style="max-width:800px;margin:auto">
+    <h1>FamilyTrust Dashboard</h1>
+    <CreateAccountForm @created="onAccountCreated"/>
+    <div v-if="account">
+      <AccountDetails :account="account"/>
+      <DepositForm :userId="userId" :accountId="account.id" @deposited="reload"/>
+      <AssetBuySellForm :accountId="account.id" @changed="reload"/>
+      <AssetList :userId="userId" :accountId="account.id" @selectAsset="selectAsset"/>
+      <AssetTransactionList v-if="selectedAssetName" :accountId="account.id" :assetName="selectedAssetName"/>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import CreateAccountForm from '../components/CreateAccountForm.vue'
+import AccountDetails from '../components/AccountDetails.vue'
+import DepositForm from '../components/DepositForm.vue'
+import AssetBuySellForm from '../components/AssetBuySellForm.vue'
+import AssetList from '../components/AssetList.vue'
+import AssetTransactionList from '../components/AssetTransactionList.vue'
+import axios from 'axios'
+
+const userId = ref('PASTE_YOUR_USER_ID_HERE')
+const account = ref(null)
+const selectedAssetName = ref('')
+
+const reload = async () => {
+  if (account.value) {
+    const res = await axios.get(`http://localhost:8084/user/${userId.value}/get/account/${account.value.id}`)
+    account.value = res.data
+  }
+}
+const selectAsset = (assetName) => {
+  selectedAssetName.value = assetName
+}
+const onAccountCreated = (acc) => {
+  account.value = acc
+  reload()
+}
+</script>
