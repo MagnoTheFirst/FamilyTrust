@@ -161,4 +161,16 @@ public class Account {
         return this;
     }
 
+
+    public BigDecimal getInvestedMoney(){
+        BigDecimal investedMoney = BigDecimal.ZERO;
+        for(AccountCashFlow transaction : this.accountCashFlows){
+            if(transaction.getCashFlowType().equals(CashflowType.DEPOSIT)){
+                investedMoney = investedMoney.add(transaction.getCashFlowAmount());
+            }
+        }
+        System.out.println("investedMoney = " + investedMoney);
+        return investedMoney;
+    }
+
 }

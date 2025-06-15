@@ -108,21 +108,16 @@ public class AccountManagementService {
         return mapToAccountResponseDto(account);
     }
 
-    // ... (Ihre anderen Service-Methoden)
-
-    // Private Hilfsmethode zum Mappen einer Account-Entität zu einem AccountResponseDto
     public AccountResponseDto mapToAccountResponseDto(Account account) {
-        // Zuerst die Liste der AccountCashFlow-Entitäten in DTOs mappen
         List<AccountCashFlowDto> cashFlowDtos = account.getAccountCashFlows().stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
                 .map(this::mapToAccountCashFlowDto) // Verwendet die untenstehende Hilfsmethode
                 .collect(Collectors.toList());
-
-        // Dann das Haupt-AccountResponseDto erstellen
         return new AccountResponseDto(
                 account.getId(),
                 account.getAccountName(),
                 account.getCurrencyCode(),
                 account.getOwnerUserId(),
+                account.getInvestedMoney(),
                 account.getBalance(),
                 account.getLastAccess(),
                 account.getCreatedDate(),
@@ -132,7 +127,7 @@ public class AccountManagementService {
         );
     }
 
-    // Private Hilfsmethode zum Mappen einer AccountCashFlow-Entität zu einem AccountCashFlowDto
+
     private AccountCashFlowDto mapToAccountCashFlowDto(AccountCashFlow cashFlow) {
         return new AccountCashFlowDto(
                 cashFlow.getUuid(),

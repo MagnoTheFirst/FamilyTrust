@@ -18,6 +18,7 @@ public record AccountResponseDto(
         String accountName,
         String currencyCode,
         UUID ownerUserId,
+        BigDecimal investedMoney,
         BigDecimal balance,
         LocalDateTime lasAccessDate,
         LocalDateTime createdDate,
