@@ -104,6 +104,7 @@ public class AssetManagementService {
 
             newAsset.addAssetTransaction(assetTransaction);
             account.get().getAssets().add(newAsset);
+            newAsset.setAssetBalance(newAsset.getAssetBalance());
             assetRepository.save(newAsset);
             assetRepository.flush();
 
@@ -119,6 +120,7 @@ public class AssetManagementService {
             asset.setQuantity(asset.getQuantity() + assetDto.quantityBigDecimal());
             AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
             asset.getAssetTransactions().add(assetTransaction);
+            asset.setAssetBalance(asset.getAssetBalance());
             assetRepository.save(asset);
             assetRepository.flush();
             return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
@@ -129,25 +131,20 @@ public class AssetManagementService {
 
     public ResponseEntity<Object> sellAsset(AssetDto assetDto) {
 
-
-        Optional<Asset> asset = assetRepository.findByAssetName(assetDto.name());
-        if (asset.isEmpty()) {
-
-            return new ResponseEntity<>("Asset not found", HttpStatus.NOT_FOUND);
+        List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
+        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
+            return new ResponseEntity<>("Asset not present in current portfolio", HttpStatus.BAD_REQUEST);
         }
-        //TODO[] implement else logic
         else{
-            asset.get().setQuantity(asset.get().getQuantity() - assetDto.quantityBigDecimal());
-            asset.get().setCurrentPrice(assetDto.currentPrice());
-
-            asset.get().updateBalance();
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_SELL, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
-            asset.get().addAssetTransaction(assetTransaction);
-            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
-            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
-            assetRepository.save(asset.get());
+            Asset asset = assetRepository.findByAssetNameAndAccountId(assetDto.name(), assetDto.accountId()).orElse(null);
+            asset.setCurrentPrice(assetDto.currentPrice());
+            asset.setQuantity(asset.getQuantity() - assetDto.quantityBigDecimal());
+            AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_SELL, (assetDto.quantityBigDecimal()*-1), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
+            asset.getAssetTransactions().add(assetTransaction);
+            asset.setAssetBalance(asset.getAssetBalance());
+            assetRepository.save(asset);
             assetRepository.flush();
-            return new ResponseEntity<>("Asset transaction completed", HttpStatus.OK);
+            return new ResponseEntity<>(assetDto.quantityBigDecimal() + " Stocks of " + assetDto.name() + " sold.", HttpStatus.OK);
         }
 
     }
@@ -161,6 +158,7 @@ public class AssetManagementService {
                 assetTransactionType,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
+                asset.getAssetBalance(),
                 asset.getAccount().getId(),
                 ""
         );
@@ -175,6 +173,7 @@ public class AssetManagementService {
                 AssetTransactionType.STOCK_BUY,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
+                asset.getAssetBalance(),
                 asset.getAccount().getId(),
                 ""
         );
@@ -189,6 +188,7 @@ public class AssetManagementService {
                 assetTransactionType,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
+                asset.getAssetBalance(),
                 asset.getAccount().getId(),
                 comment
         );

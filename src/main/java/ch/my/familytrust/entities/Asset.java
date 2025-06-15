@@ -120,9 +120,16 @@ public class Asset {
     public BigDecimal getAssetBalance() {
         BigDecimal assetBalance = new BigDecimal(0);
         for(AssetTransaction transaction : assetTransactions){
-            BigDecimal balance = new BigDecimal(transaction.quantity);
-            assetBalance.add(balance.multiply(transaction.getPrice()));
+            BigDecimal tmp = transaction.getAssetTransactionBalance();
+            if(tmp == null){
+                System.out.println("ERROR getAssetBalance()");
+            }
+            else {
+                System.out.println("SUCCESS " + transaction.getAssetTransactionBalance());
+                assetBalance = assetBalance.add(tmp);
+            }
         }
+        System.out.println(assetBalance);
         return assetBalance;
     }
 }
