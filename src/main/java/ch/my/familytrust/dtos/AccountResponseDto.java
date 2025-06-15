@@ -1,6 +1,7 @@
 package ch.my.familytrust.dtos;
 
 import ch.my.familytrust.entities.AccountCashFlow;
+import ch.my.familytrust.entities.Asset;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,10 +18,11 @@ public record AccountResponseDto(
         String accountName,
         String currencyCode,
         UUID ownerUserId,
+        BigDecimal investedMoney,
         BigDecimal balance,
         LocalDateTime lasAccessDate,
         LocalDateTime createdDate,
         BigDecimal availableMoney,
-        List<AccountCashFlowDto> cashFlowList
-) {
-}
+        List<AccountCashFlowDto> cashFlowList,
+        List<Asset> assets
+) {}

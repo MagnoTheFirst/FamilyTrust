@@ -5,18 +5,24 @@ import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.entities.AssetTransaction;
 import ch.my.familytrust.enums.AssetTransactionType;
+import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.repositories.AccountRepository;
 import ch.my.familytrust.repositories.AssetRepository;
+import ch.my.familytrust.repositories.AssetTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+
+//TODO[] REMOVE CASH AS ASSET TYPE
 @Service
 public class AssetManagementService {
 
@@ -25,6 +31,8 @@ public class AssetManagementService {
 
     @Autowired
     AccountManagementService accountManagementService;
+    @Autowired
+    private AssetTransactionRepository assetTransactionRepository;
 
     public AssetManagementService(AccountRepository accountRepository, AccountManagementService accountManagementService) {
         this.accountManagementService = accountManagementService;
@@ -32,9 +40,20 @@ public class AssetManagementService {
     }
 
 
-    public List<Asset> getAssets(UUID uuid) {
+    public List<AssetDto> getAssets(UUID uuid) {
         Account account = accountManagementService.getAccountByAccountId(uuid);
-        return accountManagementService.getAssetsFromAccount(account);
+        return assetRepository.findByAccountId(uuid).stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
+                .map(this::mapAssetToAssetDto).collect(Collectors.toList());
+    }
+
+    public List<AssetDto> getSpecificAssetType(AssetType assetType) {
+        return assetRepository.findAssetByAssetType(assetType).stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
+                .map(this::mapAssetToAssetDto).collect(Collectors.toList());
+    }
+
+    public List<Asset> getAssetsByUserId(UUID uuid) {
+        Account account = accountManagementService.getAccountByAccountId(uuid);
+        return assetRepository.findByAccountId(uuid); //accountManagementService.getAssetsFromAccount(account);
     }
 
     public Asset getAsset(Long uuid) {
@@ -42,9 +61,31 @@ public class AssetManagementService {
         return assetRepository.findById(uuid).orElse(null);
     }
 
-    public AssetDto getAssetDto(Long uuid) {
+    public AssetDto getAssetDtoByAssetId(Long uuid) {
         Asset asset = getAsset(uuid);
         return mapAssetToAssetDto(asset, AssetTransactionType.STOCK_BUY);
+    }
+
+    public ResponseEntity<Object> newAssetTransaction(AssetDto assetDto) {
+        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)) {
+            return buyAsset(assetDto);
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)) {
+            return sellAsset(assetDto);
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.CRYPTO_CURRENCY_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_BUY)) {
+            return null;
+        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_SELL)) {
+            return null;
+        } else{
+            return new ResponseEntity<>("UNKNOWN TRANSACTION",HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -52,26 +93,39 @@ public class AssetManagementService {
     public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
 
         Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
-        //TODO[] is assetname really correct or should the id be used? Problem is that I dont know if ID is globaly or per asset assigned to an account
-        Optional<Asset> asset = accountManagementService.getAssetFromAccountAssetsWithAssetName(account.get().getAssets(), assetDto.name());
-        if (asset.isEmpty() && !checkIfAssetAlreadyExist(assetDto.name(), assetDto.accountId())) {
+
+
+        List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
+        BigDecimal investmentAmount = new BigDecimal(String.valueOf(assetDto.quantityBigDecimal())).multiply(assetDto.currentPrice());
+        System.out.println(account.get().getAvailableMoney().compareTo(investmentAmount));
+        if(account.get().getAvailableMoney().compareTo(investmentAmount) == -1) {
+            return new ResponseEntity<>("AVAILABLE MONEY NOT SUFFICIENT",HttpStatus.EXPECTATION_FAILED);
+        }
+        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+
+            AssetTransaction assetTransaction = new AssetTransaction(newAsset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+
             newAsset.addAssetTransaction(assetTransaction);
+            account.get().getAssets().add(newAsset);
+            newAsset.setAssetBalance(newAsset.getAssetBalance());
+            assetRepository.save(newAsset);
+            assetRepository.flush();
+
             //TODO[] must be refactored its not really clean
 
-            return             accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
+            return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
-        //TODO[] implement else logic
         else{
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
-            asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
-            asset.get().setCurrentPrice(assetDto.currentPrice());
-            asset.get().addAssetTransaction(assetTransaction);
-            asset.get().updateBalance();
-            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
-            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
-            assetRepository.save(asset.get());
+            Asset asset = assetRepository.findByAssetNameAndAccountId(assetDto.name(), assetDto.accountId()).orElse(null);
+            System.out.println(asset.toString());
+            System.out.println(assetTransactionRepository.findAll());
+            asset.setCurrentPrice(assetDto.currentPrice());
+            asset.setQuantity(asset.getQuantity() + assetDto.quantityBigDecimal());
+            AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
+            asset.getAssetTransactions().add(assetTransaction);
+            asset.setAssetBalance(asset.getAssetBalance());
+            assetRepository.save(asset);
             assetRepository.flush();
             return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
         }
@@ -81,27 +135,25 @@ public class AssetManagementService {
 
     public ResponseEntity<Object> sellAsset(AssetDto assetDto) {
 
-        Optional<Account> account = Optional.ofNullable(accountManagementService.getAccountByAccountId(assetDto.accountId()));
-        Optional<Asset> asset = assetRepository.findByAssetName(assetDto.name());
-        if (asset.isEmpty()) {
-            Asset newAsset = new Asset(assetDto);
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
-            newAsset.addAssetTransaction(assetTransaction);
-            accountManagementService.insertNewAsset(account.get().getId(), newAsset);
-            return new ResponseEntity<>("Asset successfull bought", HttpStatus.OK);
+        List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
+        Account account = accountManagementService.getAccountByAccountId(assetDto.accountId());
+        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
+            return new ResponseEntity<>("Asset not present in current portfolio", HttpStatus.BAD_REQUEST);
         }
-        //TODO[] implement else logic
         else{
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.get().getAssetBalance(), assetDto.comment());
-            asset.get().setQuantity(asset.get().getQuantity() + assetDto.quantityBigDecimal());
-            asset.get().setCurrentPrice(assetDto.currentPrice());
-            asset.get().addAssetTransaction(assetTransaction);
-            asset.get().updateBalance();
-            BigDecimal stockAmount = new BigDecimal(assetDto.quantityBigDecimal());
-            asset.get().setInvestedMoney(assetDto.currentPrice().multiply(stockAmount));
-            assetRepository.save(asset.get());
+            Asset asset = assetRepository.findByAssetNameAndAccountId(assetDto.name(), assetDto.accountId()).orElse(null);
+            asset.setCurrentPrice(assetDto.currentPrice());
+            asset.setQuantity(asset.getQuantity() - assetDto.quantityBigDecimal());
+            AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_SELL, (assetDto.quantityBigDecimal()*-1), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
+            asset.getAssetTransactions().add(assetTransaction);
+            asset.setAssetBalance(asset.getAssetBalance());
+            account.getAvailableMoney().add(assetTransaction.getAssetTransactionBalance());
+            //            BigDecimal realizedProfitLoss = new BigDecimal(assetDto.quantityBigDecimal());
+//            realizedProfitLoss.add(realizedProfitLoss.multiply(assetDto.currentPrice()));
+//            asset.getRealizedProfitLoss().add(realizedProfitLoss);
+            assetRepository.save(asset);
             assetRepository.flush();
-            return new ResponseEntity<>("Assets added to existing asset portfolio", HttpStatus.OK);
+            return new ResponseEntity<>(assetDto.quantityBigDecimal() + " Stocks of " + assetDto.name() + " sold.", HttpStatus.OK);
         }
 
     }
@@ -115,6 +167,22 @@ public class AssetManagementService {
                 assetTransactionType,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
+                asset.getAssetBalance(),
+                asset.getAccount().getId(),
+                ""
+        );
+    }
+
+    public AssetDto mapAssetToAssetDto(Asset asset) {
+        return new AssetDto(
+                asset.getAssetId(),
+                asset.getName(),
+                asset.getStockSymbol(),
+                asset.getAssetType(),
+                AssetTransactionType.STOCK_BUY,
+                asset.getCurrentPrice(),
+                asset.getQuantity(),
+                asset.getAssetBalance(),
                 asset.getAccount().getId(),
                 ""
         );
@@ -129,13 +197,17 @@ public class AssetManagementService {
                 assetTransactionType,
                 asset.getCurrentPrice(),
                 asset.getQuantity(),
+                asset.getAssetBalance(),
                 asset.getAccount().getId(),
                 comment
         );
     }
 
-    public boolean checkIfAssetAlreadyExist(String assetName, UUID accountId) {
-        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isPresent();
+    public boolean isAssetPresent(String assetName, UUID accountId) {
+        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isEmpty();
     }
 
+    public Asset getAssetByAssetNameAndAccountId(String assetName, UUID accountId) {
+        return assetRepository.findByAssetNameAndAccountId(assetName, accountId).orElse(null);
+    }
 }

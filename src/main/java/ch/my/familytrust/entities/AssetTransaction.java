@@ -25,6 +25,8 @@ public class AssetTransaction {
 
     @CreationTimestamp
     LocalDateTime transactionDate;
+    @NotNull
+    @Enumerated(EnumType.STRING)
     AssetTransactionType assetTransactionType;
     Double quantity;
     BigDecimal price;
@@ -40,7 +42,8 @@ public class AssetTransaction {
         this.assetTransactionType = assetTransactionType;
         this.quantity = quantity;
         this.price = price;
-        this.assetTransactionBalance = assetTransactionBalance;
+        BigDecimal amount = new BigDecimal(quantity);
+        this.assetTransactionBalance = amount.multiply(price);
         this.comment = comment;
     }
 
@@ -48,10 +51,30 @@ public class AssetTransaction {
         this.assetTransactionType = assetTransactionType;
         this.quantity = quantity;
         this.price = price;
-        this.assetTransactionBalance = assetTransactionBalance;
+        BigDecimal amount = new BigDecimal(quantity);
+        this.assetTransactionBalance = amount.multiply(price);
         this.comment = comment;
     }
 
+    public AssetTransaction(Asset asset, AssetTransactionType assetTransactionType, Double quantity, BigDecimal price, BigDecimal assetTransactionBalance, String comment) {
+        this.assetTransactionType = assetTransactionType;
+        this.quantity = quantity;
+        this.price = price;
+        BigDecimal amount = new BigDecimal(quantity);
+        this.assetTransactionBalance = amount.multiply(price);
+        this.comment = comment;
+        this.asset = asset;
+    }
+    public AssetTransaction(Asset asset, LocalDateTime transactionDate, AssetTransactionType assetTransactionType, Double quantity, BigDecimal price, BigDecimal assetTransactionBalance, String comment) {
+        this.transactionDate = transactionDate;
+        this.assetTransactionType = assetTransactionType;
+        this.quantity = quantity;
+        this.price = price;
+        BigDecimal amount = new BigDecimal(quantity);
+        this.assetTransactionBalance = amount.multiply(price);
+        this.comment = comment;
+        this.asset = asset;
+    }
 
 
 

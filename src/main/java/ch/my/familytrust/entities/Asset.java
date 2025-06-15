@@ -3,6 +3,7 @@ package ch.my.familytrust.entities;
 import ch.my.familytrust.dtos.AssetDto;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.AssetType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,9 +31,12 @@ public class Asset {
     String name;
 
     String stockSymbol;
+
     @NotNull
+    @Enumerated(EnumType.STRING)
     AssetType assetType;
 
+    //TODO[] change currentPrice to last_known_price
     BigDecimal currentPrice;
 
     @NotNull
@@ -49,8 +53,20 @@ public class Asset {
 
     BigDecimal investedMoney;
 
+
+    BigDecimal unrealizedProfitLoss;
+
+    /*
+    * TODO[] implement a coherent logic
+    * When an asset is closed because all instances are sold,
+    * realizedProfitLoss
+    *
+    * */
+    BigDecimal realizedProfitLoss;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonIgnore
     private Account account;
 
     public Asset(Boolean archived, Boolean active, BigDecimal assetBalance, Double amount, BigDecimal currentPrice, AssetType assetType, String stockSymbol, String name) {
@@ -80,6 +96,8 @@ public class Asset {
         this.name = dto.name();
         this.assetId = dto.assetId();
         this.assetTransactions = new ArrayList<>();
+        this.account = new Account();
+        this.account.setId(dto.accountId());
         this.investedMoney = dto.currentPrice().multiply(BigDecimal.valueOf(dto.quantityBigDecimal()));
     }
 
@@ -103,5 +121,45 @@ public class Asset {
     public void addAssetTransaction(AssetTransaction transaction) {
         this.assetTransactions.add(transaction);
     }
+
+
+    /*
+    * //TODO[] This Method is an error
+    * What I want to achieve is to make a balance that shows the invested amount of cash and the earned amount of cash through stock
+    * sale.
+    * */
+    public BigDecimal getTransactionBalance() {
+        BigDecimal assetBalance = new BigDecimal(0);
+        for(AssetTransaction transaction : assetTransactions){
+            BigDecimal tmp = transaction.getAssetTransactionBalance();
+            if(tmp == null){
+                System.out.println("ERROR getAssetBalance()");
+            }
+            else {
+                System.out.println("SUCCESS " + transaction.getAssetTransactionBalance());
+                assetBalance = assetBalance.add(tmp);
+            }
+        }
+        System.out.println(assetBalance);
+        return assetBalance;
+    }
+
+
+    public BigDecimal getAssetBalance() {
+        BigDecimal balance = new BigDecimal(0);
+        balance = balance.add(this.currentPrice.multiply(BigDecimal.valueOf(this.quantity)));
+        return balance;
+    }
+
+    public BigDecimal getUnrealizedProfitLoss() {
+        BigDecimal unrealizedProfitLoss = new BigDecimal(String.valueOf(this.currentPrice.multiply(BigDecimal.valueOf(this.quantity))));
+        this.unrealizedProfitLoss = unrealizedProfitLoss.subtract(investedMoney);
+        return this.unrealizedProfitLoss;
+    }
+
+    public BigDecimal getRealizedProfitLoss() {
+        return this.realizedProfitLoss;
+    }
+
 
 }

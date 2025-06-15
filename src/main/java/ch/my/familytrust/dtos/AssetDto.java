@@ -11,6 +11,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public record AssetDto(Long assetId, String name, String stockSymbol, AssetType assetType, AssetTransactionType assetTransactionType, BigDecimal currentPrice, Double quantityBigDecimal, UUID accountId,
+public record AssetDto(Long assetId,
+                       String name,
+                       String stockSymbol,
+                       AssetType assetType,
+                       AssetTransactionType assetTransactionType,
+                       BigDecimal currentPrice,
+                       Double quantityBigDecimal,
+                       BigDecimal assetBalance,
+                       UUID accountId,
                        String comment) {
 }

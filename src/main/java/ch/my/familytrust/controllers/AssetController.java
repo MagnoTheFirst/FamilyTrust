@@ -1,9 +1,12 @@
 package ch.my.familytrust.controllers;
 
 import ch.my.familytrust.dtos.AssetDto;
+import ch.my.familytrust.entities.Asset;
 import ch.my.familytrust.enums.AssetTransactionType;
+import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.services.AccountManagementService;
 import ch.my.familytrust.services.AssetManagementService;
+import ch.my.familytrust.services.AssetTransactionService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,9 @@ public class AssetController {
     @Autowired
     AccountManagementService accountManagementService;
 
+    @Autowired
+    AssetTransactionService assetTransactionService;
+
     public AssetController(AssetManagementService assetManagementService) {
         this.assetManagementService = assetManagementService;
     }
@@ -44,14 +50,30 @@ public class AssetController {
     public ResponseEntity<Object> getAssets(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
         return new ResponseEntity<>(assetManagementService.getAssets(accountId), HttpStatus.OK);
     }
+/*
+    //TODO[] Prototype cleancode if it works
+    @GetMapping("/user/{user-id}/account/{account-id}/list/assetTransactions/{asset-id}")
+    public ResponseEntity<Object> getAssetTransactionList(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId, @PathVariable("asset-id") Long assetId){
+        //Asset asset = assetManagementService.getAsset(userId);
+        //System.out.println(asset.getAssetTransactions().isEmpty());
+        return new ResponseEntity<>(assetTransactionService.getAssetTransactions(asset), HttpStatus.OK);
+    }*/
 
-    @PostMapping("/user/{user-id}/account/{account-id}/asset-transaction")
-    public ResponseEntity<Object> buyAsset(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
-        return new ResponseEntity<>("BUY ASSET", HttpStatus.OK);
+    //TODO[] Prototype cleancode if it works
+    @GetMapping("/account/{account-id}/list/assetTransactions/{asset-name}")
+    public ResponseEntity<Object> getAssetTransactionList(@PathVariable("account-id") UUID accountId, @PathVariable("asset-name") String assetName){
+        Asset asset = assetManagementService.getAssetByAssetNameAndAccountId(assetName, accountId);
+        System.out.println(asset.getAssetTransactions().isEmpty());
+        return new ResponseEntity<>(assetTransactionService.getAssetTransactions(asset), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{user-id}/account/{account-id}/list/asset-types/{asset-type}")
+    public ResponseEntity<Object> listSpecificAssetTypes(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId, @PathVariable("asset-type") AssetType assetType){
+        return new ResponseEntity<>(assetManagementService.getSpecificAssetType(assetType), HttpStatus.OK);
     }
 
     @PostMapping("/asset-transaction")
-    public ResponseEntity<Object> buyAsset(AssetDto assetDto) {
+    public ResponseEntity<Object> buyOrSellAsset(AssetDto assetDto) {
         if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)){
             return assetManagementService.buyAsset(assetDto);
         }

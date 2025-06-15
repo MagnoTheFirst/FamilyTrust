@@ -29,12 +29,13 @@ public class UserAccountController {
 
 
     @GetMapping("/user/{user-id}/get/accounts")
-    public ResponseEntity<Object> getUsers(@PathVariable("user-id") UUID userId){
-        System.out.println(userId);
+    public ResponseEntity<List<AccountResponseDto>> getAccounts(@PathVariable("user-id") UUID userId) {
         List<Account> accounts = accountManagementService.getAccountsByUserId(userId);
-        return new ResponseEntity<>(accounts, HttpStatus.OK);
+        List<AccountResponseDto> dtos = accounts.stream()
+                .map(accountManagementService::mapToAccountResponseDto) // mapping-Methode im Service
+                .toList();
+        return ResponseEntity.ok(dtos);
     }
-
 
 
     @GetMapping("/user/{user-id}/get/accounts1")

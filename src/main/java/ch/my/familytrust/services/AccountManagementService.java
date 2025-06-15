@@ -3,6 +3,7 @@ package ch.my.familytrust.services;
 
 import ch.my.familytrust.dtos.AccountCashFlowDto;
 import ch.my.familytrust.dtos.AccountResponseDto;
+import ch.my.familytrust.dtos.AssetDto;
 import ch.my.familytrust.entities.Account;
 import ch.my.familytrust.entities.AccountCashFlow;
 import ch.my.familytrust.entities.Asset;
@@ -107,30 +108,26 @@ public class AccountManagementService {
         return mapToAccountResponseDto(account);
     }
 
-    // ... (Ihre anderen Service-Methoden)
-
-    // Private Hilfsmethode zum Mappen einer Account-Entität zu einem AccountResponseDto
-    private AccountResponseDto mapToAccountResponseDto(Account account) {
-        // Zuerst die Liste der AccountCashFlow-Entitäten in DTOs mappen
+    public AccountResponseDto mapToAccountResponseDto(Account account) {
         List<AccountCashFlowDto> cashFlowDtos = account.getAccountCashFlows().stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
                 .map(this::mapToAccountCashFlowDto) // Verwendet die untenstehende Hilfsmethode
                 .collect(Collectors.toList());
-
-        // Dann das Haupt-AccountResponseDto erstellen
         return new AccountResponseDto(
                 account.getId(),
                 account.getAccountName(),
                 account.getCurrencyCode(),
                 account.getOwnerUserId(),
+                account.getInvestedMoney(),
                 account.getBalance(),
                 account.getLastAccess(),
                 account.getCreatedDate(),
                 account.getAvailableMoney(),
-                cashFlowDtos // Hier die gemappte Liste von CashFlow-DTOs übergeben
+                cashFlowDtos,
+                account.getAssets()// Hier die gemappte Liste von CashFlow-DTOs übergeben
         );
     }
 
-    // Private Hilfsmethode zum Mappen einer AccountCashFlow-Entität zu einem AccountCashFlowDto
+
     private AccountCashFlowDto mapToAccountCashFlowDto(AccountCashFlow cashFlow) {
         return new AccountCashFlowDto(
                 cashFlow.getUuid(),
@@ -146,9 +143,9 @@ public class AccountManagementService {
 
     @Transactional
     public Account getAccountByAccountId(UUID accountId) {
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        return account;
+        Optional<Account> account = Optional.ofNullable(accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found ACCOUNT MANAGEMENT SERVICE. ")));
+        return account.get();
     }
 
     @Transactional
@@ -172,11 +169,19 @@ public class AccountManagementService {
     //TODO[] Implement check if Asset is really not already present
     public ResponseEntity<Object> insertNewAsset(UUID accountId, Asset asset){
         Optional<Account> account = accountRepository.findById(accountId);
+
+        System.out.println("AccountManagementServcie.insertNewAsset: 1 ");
         if(account.isPresent()){
+
+            System.out.println("AccountManagementServcie.insertNewAsset: 2 ");
             account.get().addAsset(asset);
             accountRepository.save(account.get());
+
+            System.out.println("AccountManagementServcie.insertNewAsset: 3 ");
             accountRepository.flush();
-            return new ResponseEntity<>("Asset added to account " + account.get().getAssets().getFirst().toString() , HttpStatus.OK);
+
+            System.out.println("AccountManagementServcie.insertNewAsset: 4 ");
+            return new ResponseEntity<>("Asset created and added to account ", HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);
@@ -189,7 +194,7 @@ public class AccountManagementService {
             account.get().addAsset(asset);
             accountRepository.save(account.get());
             accountRepository.flush();
-            return new ResponseEntity<>("Asset added to account", HttpStatus.OK);
+            return new ResponseEntity<>("Asset added to the already present asset account", HttpStatus.OK);
         }
         else{
             return new ResponseEntity<>("Account not found", HttpStatus.NOT_FOUND);
@@ -210,4 +215,18 @@ public class AccountManagementService {
         }
     }
 */
+
+    public Boolean isAssetAlreadyPresent(UUID accountId, Asset asset){
+        Account account = findAccountEntityById(accountId);
+        for(Asset asset1 : account.getAssets()){
+            if(asset1.getName().equals(asset.getName())){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return false;
+    }
+
 }
