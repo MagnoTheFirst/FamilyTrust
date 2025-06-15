@@ -53,6 +53,17 @@ public class Asset {
 
     BigDecimal investedMoney;
 
+
+    BigDecimal unrealizedProfitLoss;
+
+    /*
+    * TODO[] implement a coherent logic
+    * When an asset is closed because all instances are sold,
+    * realizedProfitLoss
+    *
+    * */
+    BigDecimal realizedProfitLoss;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     @JsonIgnore
@@ -113,11 +124,11 @@ public class Asset {
 
 
     /*
-    *
-    * Is it better to subtract the invested money?
-    * THis method will not work. Because I didn´t consider selling transactions
+    * //TODO[] This Method is an error
+    * What I want to achieve is to make a balance that shows the invested amount of cash and the earned amount of cash through stock
+    * sale.
     * */
-    public BigDecimal getAssetBalance() {
+    public BigDecimal getTransactionBalance() {
         BigDecimal assetBalance = new BigDecimal(0);
         for(AssetTransaction transaction : assetTransactions){
             BigDecimal tmp = transaction.getAssetTransactionBalance();
@@ -132,4 +143,23 @@ public class Asset {
         System.out.println(assetBalance);
         return assetBalance;
     }
+
+
+    public BigDecimal getAssetBalance() {
+        BigDecimal balance = new BigDecimal(0);
+        balance = balance.add(this.currentPrice.multiply(BigDecimal.valueOf(this.quantity)));
+        return balance;
+    }
+
+    public BigDecimal getUnrealizedProfitLoss() {
+        BigDecimal unrealizedProfitLoss = new BigDecimal(String.valueOf(this.currentPrice.multiply(BigDecimal.valueOf(this.quantity))));
+        this.unrealizedProfitLoss = unrealizedProfitLoss.subtract(investedMoney);
+        return this.unrealizedProfitLoss;
+    }
+
+    public BigDecimal getRealizedProfitLoss() {
+        return this.realizedProfitLoss;
+    }
+
+
 }

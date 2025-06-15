@@ -96,7 +96,11 @@ public class AssetManagementService {
 
 
         List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
-
+        BigDecimal investmentAmount = new BigDecimal(String.valueOf(assetDto.quantityBigDecimal())).multiply(assetDto.currentPrice());
+        System.out.println(account.get().getAvailableMoney().compareTo(investmentAmount));
+        if(account.get().getAvailableMoney().compareTo(investmentAmount) == -1) {
+            return new ResponseEntity<>("AVAILABLE MONEY NOT SUFFICIENT",HttpStatus.EXPECTATION_FAILED);
+        }
         if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
 
@@ -132,6 +136,7 @@ public class AssetManagementService {
     public ResponseEntity<Object> sellAsset(AssetDto assetDto) {
 
         List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
+        Account account = accountManagementService.getAccountByAccountId(assetDto.accountId());
         if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
             return new ResponseEntity<>("Asset not present in current portfolio", HttpStatus.BAD_REQUEST);
         }
@@ -142,6 +147,10 @@ public class AssetManagementService {
             AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_SELL, (assetDto.quantityBigDecimal()*-1), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
             asset.getAssetTransactions().add(assetTransaction);
             asset.setAssetBalance(asset.getAssetBalance());
+            account.getAvailableMoney().add(assetTransaction.getAssetTransactionBalance());
+            //            BigDecimal realizedProfitLoss = new BigDecimal(assetDto.quantityBigDecimal());
+//            realizedProfitLoss.add(realizedProfitLoss.multiply(assetDto.currentPrice()));
+//            asset.getRealizedProfitLoss().add(realizedProfitLoss);
             assetRepository.save(asset);
             assetRepository.flush();
             return new ResponseEntity<>(assetDto.quantityBigDecimal() + " Stocks of " + assetDto.name() + " sold.", HttpStatus.OK);
