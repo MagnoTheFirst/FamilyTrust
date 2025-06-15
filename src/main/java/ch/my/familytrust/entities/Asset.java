@@ -36,6 +36,7 @@ public class Asset {
     @Enumerated(EnumType.STRING)
     AssetType assetType;
 
+    //TODO[] change currentPrice to last_known_price
     BigDecimal currentPrice;
 
     @NotNull

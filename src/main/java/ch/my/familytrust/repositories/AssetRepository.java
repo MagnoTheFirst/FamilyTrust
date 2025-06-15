@@ -19,15 +19,20 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     Optional<Asset> findByAssetName(@Param("assetName") String assetName);
 
 
+    @Query("SELECT a FROM Asset a WHERE a.name = :assetName AND a.assetId = :accountId")
+    Optional<Asset> findByAssetNameAndAccount(@Param("assetName") String assetName, @Param("accountId") UUID accountId);
+
+
     @Query("SELECT a FROM Asset a WHERE a.name = :assetName AND a.account.id = :accountId")
     Optional<Asset> findByAssetNameAndAccountId(@Param("assetName") String assetName, @Param("accountId") UUID accountId);
 
 
-    @Query("SELECT a FROM Asset a WHERE a.account.id = ?1")
+    @Query("SELECT a FROM Asset a WHERE a.account.id = ?1 ")
     List<Asset> findByAccountId(UUID accountId);
 
     @Query("SELECT a FROM Asset a WHERE a.assetType = :assetType")
     List<Asset> findAssetByAssetType(@Param("assetType") AssetType assetType);
 
-
+    @Query("SELECT a FROM Asset a LEFT JOIN FETCH a.assetTransactions WHERE a.assetId = :id")
+    Asset findAssetWithTransactions(@Param("id") Long id);
 }

@@ -14,6 +14,12 @@ import java.util.UUID;
 public interface AssetTransactionRepository extends JpaRepository<AssetTransaction, Long> {
 
     @Query("SELECT a FROM AssetTransaction a WHERE a.asset.assetId = :assetId AND a.asset.account.id = :accountId")
-    Optional<AssetTransaction> findByAssetTransactionNameAndAccountId(@Param("assetId") Long assetId, @Param("accountId") UUID accountId);
+    Optional<AssetTransaction> findByAssetTransactionIdAndAccountId(@Param("assetId") Long assetId, @Param("accountId") UUID accountId);
+
+
+    @Query("SELECT a FROM AssetTransaction a WHERE a.asset.assetId = :assetId AND a.asset.account.id = :accountId")
+    Optional<AssetTransaction> findByAssetTransactionNameAndAccountId(@Param("assetName") Long assetId, @Param("accountId") UUID accountId);
+
+
 
 }

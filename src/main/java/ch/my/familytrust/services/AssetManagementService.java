@@ -8,12 +8,14 @@ import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.AssetType;
 import ch.my.familytrust.repositories.AccountRepository;
 import ch.my.familytrust.repositories.AssetRepository;
+import ch.my.familytrust.repositories.AssetTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +31,8 @@ public class AssetManagementService {
 
     @Autowired
     AccountManagementService accountManagementService;
+    @Autowired
+    private AssetTransactionRepository assetTransactionRepository;
 
     public AssetManagementService(AccountRepository accountRepository, AccountManagementService accountManagementService) {
         this.accountManagementService = accountManagementService;
@@ -96,7 +100,7 @@ public class AssetManagementService {
         if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
 
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
+            AssetTransaction assetTransaction = new AssetTransaction(newAsset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
 
             newAsset.addAssetTransaction(assetTransaction);
             account.get().getAssets().add(newAsset);
@@ -108,10 +112,12 @@ public class AssetManagementService {
             return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
         else{
-            Asset asset = assetRepository.findByAssetName(assetDto.name()).orElse(null);
+            Asset asset = assetRepository.findByAssetNameAndAccountId(assetDto.name(), assetDto.accountId()).orElse(null);
+            System.out.println(asset.toString());
+            System.out.println(assetTransactionRepository.findAll());
             asset.setCurrentPrice(assetDto.currentPrice());
             asset.setQuantity(asset.getQuantity() + assetDto.quantityBigDecimal());
-            AssetTransaction assetTransaction = new AssetTransaction(AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
+            AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), asset.getAssetBalance(), assetDto.comment());
             asset.getAssetTransactions().add(assetTransaction);
             assetRepository.save(asset);
             assetRepository.flush();
@@ -192,4 +198,7 @@ public class AssetManagementService {
         return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isEmpty();
     }
 
+    public Asset getAssetByAssetNameAndAccountId(String assetName, UUID accountId) {
+        return assetRepository.findByAssetNameAndAccountId(assetName, accountId).orElse(null);
+    }
 }
