@@ -65,9 +65,10 @@ public class AssetTransactionService {
                 assetTransaction.getAsset().getStockSymbol(),
                 assetTransaction.getAsset().getAssetType(),
                 assetTransaction.getAssetTransactionType(),
-                assetTransaction.getComment(),
                 assetTransaction.getTransactionDate(),
                 assetTransaction.getPrice(),
-                assetTransaction.getAssetTransactionBalance());
+                assetTransaction.getQuantity(),
+                assetTransaction.getAssetTransactionBalance(),
+                assetTransaction.getComment());
     }
 }

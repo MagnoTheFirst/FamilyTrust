@@ -111,4 +111,19 @@ public class Asset {
         this.assetTransactions.add(transaction);
     }
 
+
+    /*
+    *
+    * Is it better to subtract the invested money?
+    * THis method will not work. Because I didn´t consider selling transactions
+    * */
+    public BigDecimal getAssetBalance() {
+        BigDecimal assetBalance = new BigDecimal(0);
+        for(AssetTransaction transaction : assetTransactions){
+            BigDecimal balance = new BigDecimal(transaction.quantity);
+            assetBalance.add(balance.multiply(transaction.getPrice()));
+        }
+        return assetBalance;
+    }
+
 }

@@ -14,8 +14,9 @@ public record GetAssetRequest(Long assetId,
                               String stockSymbol,
                               AssetType assetType,
                               AssetTransactionType assetTransactionType,
-                              String comment,
                               LocalDateTime transactionDate,
                               BigDecimal price,
-                              BigDecimal transactionBalance) {
+                              Double amount,
+                              BigDecimal transactionBalance,
+                              String comment) {
 }
