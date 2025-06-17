@@ -1,27 +1,39 @@
 <template>
-  <form @submit.prevent="create">
-    <h2>Konto anlegen</h2>
-    <input v-model="accountName" placeholder="Konto-Name" required>
-    <input v-model="currencyCode" placeholder="Währung (z.B. EUR)" required>
-    <input v-model="ownerUserId" placeholder="User-ID" required>
-    <button type="submit">Anlegen</button>
-  </form>
+  <div>
+    <h2>Neues Konto erstellen</h2>
+    <form @submit.prevent="submit">
+      <input v-model="accountName" placeholder="Konto-Name" />
+      <input v-model="currencyCode" placeholder="Währung (z.B. CHF)" />
+      <button type="submit">Erstellen</button>
+    </form>
+  </div>
 </template>
-<script setup>
-import { ref } from 'vue'
-import axios from 'axios'
 
-const accountName = ref("")
-const currencyCode = ref("")
-const ownerUserId = ref("")
-const emit = defineEmits(['created'])
+<script>
+import { createAccount } from '@/api/account';
 
-const create = async () => {
-  const res = await axios.post('http://localhost:8084/user/create/account/' + ownerUserId.value, {
-    accountName: accountName.value,
-    currencyCode: currencyCode.value,
-    ownerUserId: ownerUserId.value
-  })
-  emit('created', res.data)
-}
+export default {
+  data() {
+    return {
+      accountName: '',
+      currencyCode: '',
+      userId: 'dein-user-id-hier', // später dynamisch setzen
+    };
+  },
+  methods: {
+    async submit() {
+      try {
+        await createAccount(this.userId, {
+          accountName: this.accountName,
+          currencyCode: this.currencyCode,
+          ownerUserId: this.userId
+        });
+        alert('Konto erfolgreich erstellt');
+      } catch (err) {
+        console.error(err);
+        alert('Fehler beim Erstellen des Kontos');
+      }
+    }
+  }
+};
 </script>
