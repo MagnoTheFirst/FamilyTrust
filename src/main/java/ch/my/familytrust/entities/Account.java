@@ -3,6 +3,7 @@ package ch.my.familytrust.entities;
 import ch.my.familytrust.enums.AssetTransactionType;
 import ch.my.familytrust.enums.CashflowType;
 import ch.my.familytrust.enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -63,9 +64,11 @@ public class Account {
     BigDecimal totalAssetValue;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("account-assets")
     private List<Asset> assets = new ArrayList<>();
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("account-transactions")
     private List<AccountTransaction> transactions = new ArrayList<>();
 
     /**
@@ -73,6 +76,7 @@ public class Account {
      * */
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("account-cashflows")
     private List<AccountCashFlow> accountCashFlows = new ArrayList<>();
 
     //List<User> sharedWith;

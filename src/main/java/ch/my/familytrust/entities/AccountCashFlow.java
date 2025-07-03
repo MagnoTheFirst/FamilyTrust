@@ -2,6 +2,7 @@ package ch.my.familytrust.entities;
 
 
 import ch.my.familytrust.enums.CashflowType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class AccountCashFlow {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonBackReference("account-cashflows")
     private Account account;
 
     public AccountCashFlow(LocalDateTime cashFlowDate, BigDecimal cashFlowAmount, CashflowType cashFlowType, String comment) {
