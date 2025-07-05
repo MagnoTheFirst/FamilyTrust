@@ -1,6 +1,7 @@
 package ch.my.familytrust.entities;
 
 import ch.my.familytrust.enums.AssetTransactionType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class AssetTransaction {
 
     @ManyToOne
     @JoinColumn(name = "asset_id")
+    @JsonBackReference("asset-transactions")
     private Asset asset;
 
     public AssetTransaction(LocalDateTime transactionDate, AssetTransactionType assetTransactionType, Double quantity, BigDecimal price, BigDecimal assetTransactionBalance, String comment) {

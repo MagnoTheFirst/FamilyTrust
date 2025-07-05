@@ -17,7 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     @Query("SELECT a FROM Account a WHERE a.ownerUserId = :userId")
     List<Account> findByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT a FROM Account a WHERE a.ownerUserId = ?1 AND a.active = true")
+    @Query("SELECT a FROM Account a WHERE a.ownerUserId = ?1 AND (a.active = true OR a.active IS NULL)")
     List<Account> findByUserIdAndActiveTrue(UUID userId);
 
     List<Account> findByOwnerUserId(UUID ownerUserId);

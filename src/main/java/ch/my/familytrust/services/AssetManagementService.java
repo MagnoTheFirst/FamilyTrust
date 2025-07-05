@@ -204,7 +204,7 @@ public class AssetManagementService {
     }
 
     public boolean isAssetPresent(String assetName, UUID accountId) {
-        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isEmpty();
+        return assetRepository.findByAssetNameAndAccountId(assetName,accountId).isPresent();
     }
 
     public Asset getAssetByAssetNameAndAccountId(String assetName, UUID accountId) {

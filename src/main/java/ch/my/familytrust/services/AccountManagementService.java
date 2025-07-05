@@ -61,7 +61,7 @@ public class AccountManagementService {
     }
 
     public List<Account> getAccountsByUserId(UUID ownerUserId){
-        return accountRepository.findByOwnerUserId(ownerUserId);
+        return accountRepository.findByUserIdAndActiveTrue(ownerUserId);
     }
 
     public List<Account> getAllAccounts(){
@@ -112,13 +112,21 @@ public class AccountManagementService {
         List<AccountCashFlowDto> cashFlowDtos = account.getAccountCashFlows().stream() // Annahme: getAccountCashFlows() ist der Getter in Ihrer Account-Entität
                 .map(this::mapToAccountCashFlowDto) // Verwendet die untenstehende Hilfsmethode
                 .collect(Collectors.toList());
+        
+        // Calculate total balance: available money + total asset value
+        BigDecimal totalAssetValue = account.getAssets().stream()
+                .map(asset -> asset.getAssetBalance() != null ? asset.getAssetBalance() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalBalance = (account.getAvailableMoney() != null ? account.getAvailableMoney() : BigDecimal.ZERO)
+                .add(totalAssetValue);
+        
         return new AccountResponseDto(
                 account.getId(),
                 account.getAccountName(),
                 account.getCurrencyCode(),
                 account.getOwnerUserId(),
                 account.getInvestedMoney(),
-                account.getBalance(),
+                totalBalance, // Use calculated balance instead of stored balance
                 account.getLastAccess(),
                 account.getCreatedDate(),
                 account.getAvailableMoney(),
