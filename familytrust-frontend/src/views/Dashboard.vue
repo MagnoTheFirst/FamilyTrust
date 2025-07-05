@@ -4,7 +4,7 @@
     <CreateAccountForm @created="onAccountCreated"/>
     <div v-if="account">
       <AccountDetails :account="account"/>
-      <DepositForm :userId="userId" :accountId="account.id" @deposited="reload"/>
+      <CashFlowForm :userId="userId" :accountId="account.id" @transaction-completed="reload"/>
       <AssetBuySellForm :accountId="account.id" @changed="reload"/>
       <AssetList :userId="userId" :accountId="account.id" @selectAsset="selectAsset"/>
       <AssetTransactionList v-if="selectedAssetName" :accountId="account.id" :assetName="selectedAssetName"/>
@@ -16,7 +16,7 @@
 import { ref } from 'vue'
 import CreateAccountForm from '../components/CreateAccountForm.vue'
 import AccountDetails from '../components/AccountDetails.vue'
-import DepositForm from '../components/DepositForm.vue'
+import CashFlowForm from '../components/CashFlowForm.vue'
 import AssetBuySellForm from '../components/AssetBuySellForm.vue'
 import AssetList from '../components/AssetList.vue'
 import AssetTransactionList from '../components/AssetTransactionList.vue'

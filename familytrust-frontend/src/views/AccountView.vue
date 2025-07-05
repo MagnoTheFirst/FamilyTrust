@@ -10,20 +10,20 @@
         <div class="space-x-2">
           <button @click="editAccount(a)" class="text-blue-600">Bearbeiten</button>
           <button @click="deleteAccount(a.id)" class="text-red-600">Löschen</button>
-          <router-link :to="`/account/${a.id}`" class="text-green-600">Details</router-link>
+          <router-link :to="`/account/${a.id}`" class="btn btn-details">Details</router-link>
         </div>
       </div>
     </div>
-    <button @click="create" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">+ Neuer Account</button>
+    <button @click="create" class="mt-4 btn btn-details">+ Neuer Account</button>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { useAccountStore } from '../stores/accountStore';
+import { onMounted, computed } from 'vue';
+import { useAccountStore } from '../accountStore';
 
 const store = useAccountStore();
-store.userId = 'REPLACE-WITH-USER-ID';
+store.userId = '123e4567-e89b-12d3-a456-426614174000';
 const accounts = computed(() => store.accounts);
 
 onMounted(() => store.fetchAccounts());
@@ -42,9 +42,16 @@ function editAccount(account) {
   }
 }
 
-function deleteAccount(id) {
+async function deleteAccount(id) {
   if (confirm('Account löschen?')) {
-    store.deleteAccount(id);
+    try {
+      console.log('Attempting to delete account:', id);
+      await store.deleteAccount(id);
+      console.log('Account deleted successfully');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('Fehler beim Löschen des Accounts: ' + (error.response?.data || error.message));
+    }
   }
 }
 </script>

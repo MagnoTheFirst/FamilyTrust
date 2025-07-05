@@ -3,7 +3,7 @@
     <h2>Konto: {{ account.accountName }}</h2>
     <p>Kontostand: {{ account.balance }} {{ account.currencyCode }}</p>
     <p>Investiert: {{ account.investedMoney }} {{ account.currencyCode }}</p>
-    <p>Verfügbar: {{ account.availableMoney }} {{ account.currencyCode }}</p>
+    <p>Verfügbares Kapital: {{ account.availableMoney }} {{ account.currencyCode }}</p>
     <p>Gewinn/Verlust: {{ profitLoss }} {{ account.currencyCode }}</p>
   </div>
 </template>

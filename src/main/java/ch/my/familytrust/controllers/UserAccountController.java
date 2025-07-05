@@ -83,14 +83,14 @@ public class UserAccountController {
 
 
     @DeleteMapping("/user/{user-id}/delete/account/{account-id}")
-    public ResponseEntity<Object> deleteUserAccount(@RequestBody DeleteAccountRequest request){
-        Account account = accountManagementService.getAccountByAccountId(request.accountId());
-        if(account.getOwnerUserId().equals(request.userId())){
+    public ResponseEntity<Object> deleteUserAccount(@PathVariable("user-id") UUID userId, @PathVariable("account-id") UUID accountId){
+        Account account = accountManagementService.getAccountByAccountId(accountId);
+        if(account != null && account.getOwnerUserId().equals(userId)){
             accountManagementService.deleteAccount(account);
             return new ResponseEntity<>("ACCOUNT DELETED", HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>("ACCOUNT NOT DELETED", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("ACCOUNT NOT DELETED - Invalid ownership or account not found", HttpStatus.BAD_REQUEST);
         }
     }
 

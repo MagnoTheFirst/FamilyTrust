@@ -75,7 +75,7 @@ export const api = {
   getAccount: (userId, accountId) => API.get(`/user/${userId}/get/account/${accountId}`),
   createAccount: (userId, data) => API.post(`/user/create/account/${userId}`, data),
   updateAccount: (userId, data) => API.patch(`/user/${userId}/change/account`, data),
-  deleteAccount: (userId, data) => API.delete(`/user/${userId}/delete/account/${data.accountId}`, { data }),
+  deleteAccount: (userId, accountId) => API.delete(`/user/${userId}/delete/account/${accountId}`),
   
   // Cash flow operations
   postCashflow: (data) => API.post('/user/account/cashFlowTransaction', data),

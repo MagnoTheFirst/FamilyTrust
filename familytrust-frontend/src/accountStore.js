@@ -99,13 +99,11 @@ export const useAccountStore = defineStore('accountStore', {
         async deleteAccount(accountId) {
             this.loading = true;
             try {
-                await api.deleteAccount(this.userId, { 
-                    userId: this.userId, 
-                    accountId 
-                });
+                await api.deleteAccount(this.userId, accountId);
                 await this.fetchAccounts();
             } catch (error) {
                 this.error = 'Fehler beim Löschen des Accounts';
+                console.error('Delete account error:', error);
                 throw error;
             } finally {
                 this.loading = false;
