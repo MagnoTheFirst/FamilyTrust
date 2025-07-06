@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/public/**", "/actuator/health").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        //.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -33,8 +33,17 @@ public class SecurityConfig {
                         )
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:5173")
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            // Redirect to Keycloak logout endpoint
+                            String keycloakLogoutUrl = "http://localhost:8180/realms/quickstart/protocol/openid-connect/logout";
+                            String redirectUri = "http://localhost:5173/logged-out";
+                            String fullLogoutUrl = keycloakLogoutUrl + "?redirect_uri=" + redirectUri;
+                            response.sendRedirect(fullLogoutUrl);
+                        })
                         .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                 )
                 .csrf(csrf -> csrf.disable()); // Disable CSRF for API calls
         return http.build();

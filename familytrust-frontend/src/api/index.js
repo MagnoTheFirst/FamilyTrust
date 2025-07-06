@@ -71,6 +71,10 @@ export const api = {
   // Test connection
   testConnection: () => API.get('/users').catch(() => API.get('/actuator/health')),
   
+  // Authentication endpoints
+  checkAuth: () => API.get('/api/v1/auth/check'),
+  getCurrentUser: () => API.get('/api/v1/auth/user'),
+  
   // Account operations
   getAccounts: (userId) => API.get(`/user/${userId}/get/accounts`),
   getAccount: (userId, accountId) => API.get(`/user/${userId}/get/account/${accountId}`),

@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 const AccountsView = () => import('../views/AccountsView.vue');
 const AccountDetailsView = () => import('../views/AccountDetailsView.vue');
 const PortfolioDashboard = () => import('../views/PortfolioDashboard.vue');
+const LoggedOutView = () => import('../views/LoggedOutView.vue');
 
 const routes = [
     { 
@@ -20,6 +21,11 @@ const routes = [
         path: '/dashboard', 
         component: PortfolioDashboard,
         meta: { title: 'Portfolio Dashboard' }
+    },
+    { 
+        path: '/logged-out', 
+        component: LoggedOutView,
+        meta: { title: 'Abgemeldet', requiresAuth: false }
     }
 ];
 
