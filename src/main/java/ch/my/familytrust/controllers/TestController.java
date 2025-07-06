@@ -15,10 +15,7 @@ public class TestController {
 
 
     @GetMapping("/hello")
-    public RedirectView redirectWithUsingRedirectView(
-            RedirectAttributes attributes) {
-        attributes.addFlashAttribute("flashAttribute", "redirectWithRedirectView");
-        attributes.addAttribute("attribute", "redirectWithRedirectView");
-        return new RedirectView("http://127.0.0.1:5173");
+    public String test1(){
+        return "Hello without World";
     }
 }
