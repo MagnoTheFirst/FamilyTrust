@@ -101,18 +101,19 @@ public class AssetManagementService {
         if(account.get().getAvailableMoney().compareTo(investmentAmount) == -1) {
             return new ResponseEntity<>("AVAILABLE MONEY NOT SUFFICIENT",HttpStatus.EXPECTATION_FAILED);
         }
-        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
+        if (assets.isEmpty() || !isAssetPresent(assetDto.name(), assetDto.accountId())) {
             Asset newAsset = new Asset(assetDto);
 
             AssetTransaction assetTransaction = new AssetTransaction(newAsset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), newAsset.getAssetBalance(), assetDto.comment());
 
             newAsset.addAssetTransaction(assetTransaction);
+            // Update account balance
+            account.get().setAvailableMoney(account.get().getAvailableMoney().subtract(investmentAmount));
+            
             account.get().getAssets().add(newAsset);
             newAsset.setAssetBalance(newAsset.getAssetBalance());
             assetRepository.save(newAsset);
             assetRepository.flush();
-
-            //TODO[] must be refactored its not really clean
 
             return accountManagementService.insertNewAsset(assetDto.accountId(), newAsset);
         }
@@ -137,7 +138,7 @@ public class AssetManagementService {
 
         List<Asset> assets = assetRepository.findByAccountId(assetDto.accountId());
         Account account = accountManagementService.getAccountByAccountId(assetDto.accountId());
-        if (assets.isEmpty() || isAssetPresent(assetDto.name(), assetDto.accountId())) {
+        if (assets.isEmpty() || !isAssetPresent(assetDto.name(), assetDto.accountId())) {
             return new ResponseEntity<>("Asset not present in current portfolio", HttpStatus.BAD_REQUEST);
         }
         else{
