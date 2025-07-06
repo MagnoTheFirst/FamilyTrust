@@ -31,7 +31,8 @@ const API = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
+  withCredentials: true // Wichtig für Session-basierte Authentifizierung
 });
 
 // Response interceptor for error handling
