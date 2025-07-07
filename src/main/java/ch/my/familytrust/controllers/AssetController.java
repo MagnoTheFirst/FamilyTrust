@@ -11,10 +11,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -73,16 +70,8 @@ public class AssetController {
     }
 
     @PostMapping("/asset-transaction")
-    public ResponseEntity<Object> buyOrSellAsset(AssetDto assetDto) {
-        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)){
-            return assetManagementService.buyAsset(assetDto);
-        }
-        else if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)){
-            return assetManagementService.sellAsset(assetDto);
-        }
-        else{
-            return new ResponseEntity<>("TRANSACTION FAILED", HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> buyOrSellAsset(@RequestBody AssetDto assetDto) {
+        return assetManagementService.newAssetTransaction(assetDto);
     }
 
 }

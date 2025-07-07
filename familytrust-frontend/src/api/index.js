@@ -89,7 +89,7 @@ export const api = {
   getAssets: (userId, accountId) => API.get(`/user/${userId}/account/${accountId}/list/assets`),
   getAsset: (userId, accountId, assetId) => API.get(`/user/${userId}/account/${accountId}/asset/${assetId}`),
   getAssetsByType: (userId, accountId, assetType) => API.get(`/user/${userId}/account/${accountId}/list/asset-types/${assetType}`),
-  buyOrSellAsset: (assetDto) => API.post('/asset-transaction', null, { params: assetDto }),
+  buyOrSellAsset: (assetDto) => API.post('/asset-transaction', assetDto),
   getAssetTransactions: (accountId, assetName) => API.get(`/account/${accountId}/list/assetTransactions/${assetName}`),
   
   // Admin operations

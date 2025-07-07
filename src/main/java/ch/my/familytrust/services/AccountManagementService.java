@@ -113,8 +113,9 @@ public class AccountManagementService {
                 .map(this::mapToAccountCashFlowDto) // Verwendet die untenstehende Hilfsmethode
                 .collect(Collectors.toList());
         
-        // Calculate total balance: available money + total asset value
+        // Calculate total balance: available money + total asset value (only active assets)
         BigDecimal totalAssetValue = account.getAssets().stream()
+                .filter(asset -> asset.getActive() == null || asset.getActive()) // Only active assets
                 .map(asset -> asset.getAssetBalance() != null ? asset.getAssetBalance() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal totalBalance = (account.getAvailableMoney() != null ? account.getAvailableMoney() : BigDecimal.ZERO)
@@ -138,7 +139,7 @@ public class AccountManagementService {
 
     private AccountCashFlowDto mapToAccountCashFlowDto(AccountCashFlow cashFlow) {
         return new AccountCashFlowDto(
-                cashFlow.getUuid(),
+                cashFlow.getId(),
                 cashFlow.getAccount().getAccountName(),
                 cashFlow.getAccount().getCurrencyCode(),
                 cashFlow.getCashFlowAmount(),

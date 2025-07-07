@@ -21,7 +21,7 @@ public class AccountCashFlow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID uuid;
+    UUID id;
 
     LocalDateTime cashFlowDate;
 
@@ -33,6 +33,8 @@ public class AccountCashFlow {
 
     String comment;
 
+    // Transfer ID to link related transfer transactions
+    UUID transferId;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

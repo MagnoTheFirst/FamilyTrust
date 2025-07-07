@@ -4,6 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 const AccountsView = () => import('../views/AccountsView.vue');
 const AccountDetailsView = () => import('../views/AccountDetailsView.vue');
 const PortfolioDashboard = () => import('../views/PortfolioDashboard.vue');
+const PortfolioAnalyticsView = () => import('../views/PortfolioAnalyticsView.vue');
+const AccountTransferView = () => import('../views/AccountTransferView.vue');
 const LoggedOutView = () => import('../views/LoggedOutView.vue');
 
 const routes = [
@@ -21,6 +23,16 @@ const routes = [
         path: '/dashboard', 
         component: PortfolioDashboard,
         meta: { title: 'Portfolio Dashboard' }
+    },
+    { 
+        path: '/analytics', 
+        component: PortfolioAnalyticsView,
+        meta: { title: 'Portfolio Analytics' }
+    },
+    { 
+        path: '/transfers', 
+        component: AccountTransferView,
+        meta: { title: 'Account Transfers' }
     },
     { 
         path: '/logged-out', 

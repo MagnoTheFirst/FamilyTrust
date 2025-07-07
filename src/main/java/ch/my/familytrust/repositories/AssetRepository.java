@@ -35,4 +35,10 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     @Query("SELECT a FROM Asset a LEFT JOIN FETCH a.assetTransactions WHERE a.assetId = :id")
     Asset findAssetWithTransactions(@Param("id") Long id);
+
+    @Query("SELECT a FROM Asset a WHERE a.name = :assetName AND a.account.id = :accountId AND (a.active = true OR a.active IS NULL)")
+    Optional<Asset> findActiveByAssetNameAndAccountId(@Param("assetName") String assetName, @Param("accountId") UUID accountId);
+
+    @Query("SELECT a FROM Asset a WHERE a.account.id = :accountId AND (a.active = true OR a.active IS NULL)")
+    List<Asset> findActiveByAccountId(@Param("accountId") UUID accountId);
 }

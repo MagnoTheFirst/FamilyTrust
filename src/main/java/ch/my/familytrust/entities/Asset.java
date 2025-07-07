@@ -110,7 +110,45 @@ public class Asset {
     }
 
     public void updateBalance() {
-
+        if (this.assetTransactions == null || this.assetTransactions.isEmpty()) {
+            this.assetBalance = BigDecimal.ZERO;
+            return;
+        }
+        
+        BigDecimal totalInvested = BigDecimal.ZERO;
+        BigDecimal totalSold = BigDecimal.ZERO;
+        
+        for (AssetTransaction transaction : this.assetTransactions) {
+            BigDecimal transactionValue = transaction.getPrice()
+                .multiply(BigDecimal.valueOf(Math.abs(transaction.getQuantity())));
+            
+            if (transaction.getAssetTransactionType() == AssetTransactionType.STOCK_BUY ||
+                transaction.getAssetTransactionType() == AssetTransactionType.ETF_BUY ||
+                transaction.getAssetTransactionType() == AssetTransactionType.CRYPTO_CURRENCY_BUY ||
+                transaction.getAssetTransactionType() == AssetTransactionType.PHYSICAL_ASSET_BUY) {
+                totalInvested = totalInvested.add(transactionValue);
+            } else if (transaction.getAssetTransactionType() == AssetTransactionType.STOCK_SELL ||
+                       transaction.getAssetTransactionType() == AssetTransactionType.ETF_SELL ||
+                       transaction.getAssetTransactionType() == AssetTransactionType.CRYPTO_CURRENCY_SELL ||
+                       transaction.getAssetTransactionType() == AssetTransactionType.PHYSICAL_ASSET_SELL) {
+                totalSold = totalSold.add(transactionValue);
+            }
+        }
+        
+        // Net invested amount (bought - sold)
+        this.investedMoney = totalInvested.subtract(totalSold);
+        
+        // Current market value - ensure currentPrice is not null
+        if (this.currentPrice != null && this.quantity != null) {
+            BigDecimal currentMarketValue = this.currentPrice.multiply(BigDecimal.valueOf(this.quantity));
+            this.assetBalance = currentMarketValue;
+            
+            // Update unrealized profit/loss
+            this.unrealizedProfitLoss = currentMarketValue.subtract(this.investedMoney);
+        } else {
+            this.assetBalance = BigDecimal.ZERO;
+            this.unrealizedProfitLoss = BigDecimal.ZERO;
+        }
     }
 
 
