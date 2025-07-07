@@ -44,12 +44,6 @@ public class AssetManagementService {
         Account account = accountManagementService.getAccountByAccountId(uuid);
         List<Asset> assets = assetRepository.findActiveByAccountId(uuid);
         
-        // Debug output
-        System.out.println("Found " + assets.size() + " active assets for account " + uuid);
-        for (Asset asset : assets) {
-            System.out.println("Asset: " + asset.getName() + ", Active: " + asset.getActive() + ", Quantity: " + asset.getQuantity());
-        }
-        
         return assets.stream()
                 .map(this::mapAssetToAssetDto)
                 .collect(Collectors.toList());
@@ -76,22 +70,19 @@ public class AssetManagementService {
     }
 
     public ResponseEntity<Object> newAssetTransaction(AssetDto assetDto) {
-        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY)) {
+        // Handle BUY transactions for all asset types
+        if(assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_BUY) ||
+           assetDto.assetTransactionType().equals(AssetTransactionType.ETF_BUY) ||
+           assetDto.assetTransactionType().equals(AssetTransactionType.CRYPTO_CURRENCY_BUY) ||
+           assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_BUY)) {
             return buyAsset(assetDto);
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL)) {
+        }
+        // Handle SELL transactions for all asset types
+        else if (assetDto.assetTransactionType().equals(AssetTransactionType.STOCK_SELL) ||
+                 assetDto.assetTransactionType().equals(AssetTransactionType.ETF_SELL) ||
+                 assetDto.assetTransactionType().equals(AssetTransactionType.CRYPTO_CURRENCY_SELL) ||
+                 assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
             return sellAsset(assetDto);
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_BUY)) {
-            return null;
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
-            return null;
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.CRYPTO_CURRENCY_BUY)) {
-            return null;
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.PHYSICAL_ASSET_SELL)) {
-            return null;
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_BUY)) {
-            return null;
-        } else if (assetDto.assetTransactionType().equals(AssetTransactionType.ETF_SELL)) {
-            return null;
         } else{
             return new ResponseEntity<>("UNKNOWN TRANSACTION",HttpStatus.BAD_REQUEST);
         }
@@ -116,7 +107,7 @@ public class AssetManagementService {
             newAsset.setActive(true);
             newAsset.setArchived(false);
 
-            AssetTransaction assetTransaction = new AssetTransaction(newAsset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), investmentAmount, assetDto.comment());
+            AssetTransaction assetTransaction = new AssetTransaction(newAsset, assetDto.assetTransactionType(), assetDto.quantityBigDecimal(), assetDto.currentPrice(), investmentAmount, assetDto.comment());
 
             newAsset.addAssetTransaction(assetTransaction);
             newAsset.updateBalance();
@@ -136,7 +127,7 @@ public class AssetManagementService {
             Asset asset = assetRepository.findActiveByAssetNameAndAccountId(assetDto.name(), assetDto.accountId()).orElse(null);
             asset.setCurrentPrice(assetDto.currentPrice());
             asset.setQuantity(asset.getQuantity() + assetDto.quantityBigDecimal());
-            AssetTransaction assetTransaction = new AssetTransaction(asset, AssetTransactionType.STOCK_BUY, assetDto.quantityBigDecimal(), assetDto.currentPrice(), investmentAmount, assetDto.comment());
+            AssetTransaction assetTransaction = new AssetTransaction(asset, assetDto.assetTransactionType(), assetDto.quantityBigDecimal(), assetDto.currentPrice(), investmentAmount, assetDto.comment());
             asset.getAssetTransactions().add(assetTransaction);
             asset.updateBalance();
             
@@ -185,7 +176,7 @@ public class AssetManagementService {
             // Verkaufs-Transaktion erstellen
             AssetTransaction sellTransaction = new AssetTransaction(
                 asset, 
-                AssetTransactionType.STOCK_SELL, 
+                assetDto.assetTransactionType(), 
                 assetDto.quantityBigDecimal(), 
                 assetDto.currentPrice(), 
                 sellValue,
