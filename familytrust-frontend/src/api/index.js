@@ -92,6 +92,11 @@ export const api = {
   buyOrSellAsset: (assetDto) => API.post('/asset-transaction', assetDto),
   getAssetTransactions: (accountId, assetName) => API.get(`/account/${accountId}/list/assetTransactions/${assetName}`),
   
+  // Portfolio Analytics operations  
+  getPortfolioAnalytics: (userId) => API.get(`/api/v1/portfolio/analytics/user/${userId}/consolidated`),
+  getAccountAnalytics: (accountId) => API.get(`/api/v1/portfolio/analytics/account/${accountId}`),
+  getPortfolioSummary: (accountId) => API.get(`/api/v1/portfolio/summary/account/${accountId}`),
+
   // Admin operations
   createUser: () => API.post('/create/user'),
   getUsers: () => API.get('/users'),

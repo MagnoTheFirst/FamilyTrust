@@ -6,7 +6,7 @@
       <AccountDetails :account="account"/>
       <CashFlowForm :userId="userId" :accountId="account.id" @transaction-completed="reload"/>
       <AssetBuySellForm :accountId="account.id" @changed="reload"/>
-      <AssetList :userId="userId" :accountId="account.id" @selectAsset="selectAsset"/>
+      <AssetList :userId="userId" :accountId="account.id" @selectAsset="selectAsset" @assetSold="onAssetSold"/>
       <AssetTransactionList v-if="selectedAssetName" :accountId="account.id" :assetName="selectedAssetName"/>
     </div>
   </div>
@@ -38,5 +38,10 @@ const selectAsset = (assetName) => {
 const onAccountCreated = (acc) => {
   account.value = acc
   reload()
+}
+
+const onAssetSold = (saleData) => {
+  console.log('Asset sold:', saleData)
+  reload() // Reload account data after asset sale
 }
 </script>
